@@ -1,6 +1,6 @@
 # Contents
 - [Lab 1](#lab-1)
-  - Access cluster
+  - Deploy and Install HDF
 - [Lab 2](#lab-2) - Getting started with NiFi
   - Consuming the Meetup RSVP stream
   - Extracting JSON elements we are interested in
@@ -33,12 +33,15 @@
 
 # Lab 1
 
-## Accessing your Cluster
+## Deploy HDF
 
-Credentials will be provided for these services by the instructor:
+You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Login to the VM as root as a starting point for this lab.
 
-* SSH
-* Ambari
+You can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
+
+### Apply prerequisites
+
+
 
 ## Use your Cluster
 
