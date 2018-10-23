@@ -53,13 +53,11 @@ yum install -y git python-argparse epel-release mysql-connector-java* mysql-comm
 ```
 #### Setup MySQL Databases
 
-..* Enable and start MySQL service:
+- Enable and start MySQL service:
 ```
 sudo systemctl enable mysqld.service
 sudo systemctl start mysqld.service
 ```
-..* Setup MySQL password:
-
 - Create the following mysql-setup.sql script:
 ```
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'Secur1ty!'; 
