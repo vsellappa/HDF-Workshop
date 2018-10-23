@@ -33,17 +33,17 @@
 
 # Lab 1
 
-## Deploy HDF
+This lab is to deploy HDF.
 
 You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Login to the VM as root as a starting point for this lab.
 
 For complete instructions, you can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
 
-### Apply prerequisites and prepare the image
+## Apply prerequisites and prepare the environment
 
 For this environment, we will use MySQL Community Edition as the database required for Streaming Analytics Manager, and the Schema Registry.
 
-#### Install required packages
+### Install required packages
 
 Install MySQL and other prerequisites packages
 
@@ -52,20 +52,21 @@ yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.no
 yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc curl ntp openssl python zlib wget unzip openssh-clients
 ```
 
-#### Apply Prerequisites for Ambari Server deployment
+### Apply Prerequisites for Ambari Server deployment
 
-- Disable ipv6: Create the file /etc/sysctl.d/99-hadoop-ipv6.conf containing the following configuration settings:
+1. Disable ipv6: 
+Create the file /etc/sysctl.d/99-hadoop-ipv6.conf containing the following configuration settings:
 ```
 net.ipv6.conf.all.disable_ipv6 = 1
 net.ipv6.conf.default.disable_ipv6 = 1
 net.ipv6.conf.lo.disable_ipv6 = 1
 ```
-- Apply the configuration changes using the following command:
+Apply the configuration changes using the following command:
 ```
 sysctl -e -p /etc/sysctl.d/99-hadoop-ipv6.conf
 ```
-- Disable Transparent Huge Pages:
 
+2. Disable Transparent Huge Pages:
 Check the existing setting. The value inside the brackets is the existing setting:
 ```
 cat /sys/kernel/mm/transparent_hugepage/enabled
@@ -77,11 +78,58 @@ echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
 echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
 ```
 
+3. Disable selinux:
+Check the current value:
+```sestatus```
+If enabled, you can disable it as follows:
+```setenforce 0```
+Edit ```/etc/selinux/config``` and set the SELINUX mode to ```disabled```:
+```
+# This file controls the state of SELinux on the system.
+# SELINUX= can take one of these three values:
+#     enforcing - SELinux security policy is enforced.
+#     permissive - SELinux prints warnings instead of enforcing.
+#     disabled - No SELinux policy is loaded.
+SELINUX=disabled
+# SELINUXTYPE= can take one of three two values:
+#     targeted - Targeted processes are protected,
+#     minimum - Modification of targeted policy. Only selected processes are protected.
+#     mls - Multi Level Security protection.
+SELINUXTYPE=targeted
+```
 
+4. Disable firewalld/iptables:
+Check if firewalld is installed:
+```yum list installed | grep firewalld```
+If this doesn't return anything, firewalld is not installed. You can skip the next step.
+If firewalld is found, run the following commands:
+```systemctl disable firewalld```
+```systemctl stop firewalld```
+Check if iptables/ip6tables is running:
+```systemctl status iptables```
+```systemctl status ip6tables```
+If the service is installed, disable it using the commands below:
+```chkconfig iptables off```
+```service iptables stop```
+```chkconfig ip6tables off```
+```service ip6tables stop```
 
+5. Enable ntpd:
+```
+ntpd -qg
+chkconfig ntpd on 
+service ntpd restart
+```
 
+6. Install Java:
+Install OpenJDK Java version 1.8:
+```
+yum install -y java-1.8.0-openjdk-devel
+mkdir -p /usr/java
+ln -sf /etc/alternatives/java_sdk /usr/java/default
+```
 
-#### Setup MySQL Databases
+### Setup MySQL Databases
 
 - Enable and start MySQL service:
 ```
