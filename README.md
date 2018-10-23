@@ -100,19 +100,27 @@ SELINUXTYPE=targeted
 
 4. Disable firewalld/iptables:
 Check if firewalld is installed:
-```yum list installed | grep firewalld```
+```
+yum list installed | grep firewalld
+```
 If this doesn't return anything, firewalld is not installed. You can skip the next step.
 If firewalld is found, run the following commands:
-```systemctl disable firewalld```
-```systemctl stop firewalld```
+```
+systemctl disable firewalld
+systemctl stop firewalld
+```
 Check if iptables/ip6tables is running:
-```systemctl status iptables```
-```systemctl status ip6tables```
+```
+systemctl status iptables
+systemctl status ip6tables
+```
 If the service is installed, disable it using the commands below:
-```chkconfig iptables off```
-```service iptables stop```
-```chkconfig ip6tables off```
-```service ip6tables stop```
+```
+chkconfig iptables off
+service iptables stop
+chkconfig ip6tables off
+service ip6tables stop
+```
 
 5. Enable ntpd:
 ```
@@ -129,7 +137,7 @@ mkdir -p /usr/java
 ln -sf /etc/alternatives/java_sdk /usr/java/default
 ```
 
-### Setup MySQL Databases
+### Setup MySQL Databases for HDF
 
 - Enable and start MySQL service:
 ```
@@ -177,6 +185,53 @@ You should see a list of databases being returned:
 | sys                |
 +--------------------+
 ```
+
+### Deploy Ambari
+
+1. Download the Ambari repository
+```
+wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
+```
+Verify that the repository has been added:
+```
+yum repolist
+```
+
+2. Install Ambari agent:
+```
+yum install -y ambari-agent
+```
+
+Edit ```/etc/ambari-agent/conf/ambari-agent.ini``` and add the parameter ```force_https_protocol=PROTOCOL_TLSv1_2``` at the \[security\] section of the file:
+```
+[security]
+force_https_protocol=PROTOCOL_TLSv1_2
+keysdir=/var/lib/ambari-agent/keys
+server_crt=ca.crt
+passphrase_env_var_name=AMBARI_PASSPHRASE
+ssl_verify_cert=0
+credential_lib_dir=/var/lib/ambari-agent/cred/lib
+credential_conf_dir=/var/lib/ambari-agent/cred/conf
+credential_shell_cmd=org.apache.hadoop.security.alias.CredentialShell
+```
+Start the Ambari agent:
+```
+chkconfig ambari-agent on
+ambari-agent start
+```
+
+3. Install Ambari server:
+```
+yum install -y ambari-server
+ambari-server setup -j /usr/java/default -s
+```
+4. Start Ambari
+```
+ambari-server start
+```
+Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
+
+
 
 ## Use your Cluster
 
