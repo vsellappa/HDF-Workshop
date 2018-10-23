@@ -37,12 +37,21 @@
 
 You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Login to the VM as root as a starting point for this lab.
 
-You can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
+For complete instructions, you can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
 
-### Apply prerequisites
+### Apply prerequisites and prepare the image
 
+For this environment, we will use MySQL Community Edition as the database required for Streaming Analytics Manager, and the Schema Registry.
 
+#### Install required packages
 
+Install MySQL and other prerequisites packages
+
+```
+yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
+yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc
+```
+   
 ## Use your Cluster
 
 ### To connect using Putty from Windows laptop
