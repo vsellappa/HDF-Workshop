@@ -51,7 +51,57 @@ Install MySQL and other prerequisites packages
 yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
 yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc
 ```
-   
+#### Setup MySQL Databases
+
+..* Enable and start MySQL service:
+```
+sudo systemctl enable mysqld.service
+sudo systemctl start mysqld.service
+```
+..* Setup MySQL password:
+
+- Create the following mysql-setup.sql script:
+```
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'Secur1ty!'; 
+uninstall plugin validate_password;
+CREATE DATABASE registry DEFAULT CHARACTER SET utf8; CREATE DATABASE streamline DEFAULT CHARACTER SET utf8; 
+CREATE USER 'registry'@'%' IDENTIFIED BY '${db_password}'; CREATE USER 'streamline'@'%' IDENTIFIED BY '${db_password}'; 
+GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION ; GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION ; 
+commit;
+```
+- Identify the password created by default and setup a new password. You can choose a password of your own and set it up in the following script. By default, it is StrongPassword:
+```
+#extract system generated Mysql password
+oldpass=$( grep 'temporary.*root@localhost' /var/log/mysqld.log | tail -n 1 | sed 's/.*root@localhost: //' )
+echo $oldpass
+export db_password=${db_password:-StrongPassword}
+```
+- Run the script mysql-setup created previously:
+```
+mysql -h localhost -u root -p"$oldpass" --connect-expired-password < mysql-setup.sql
+```
+- Change root user password for mysql:
+```
+mysqladmin -u root -p'Secur1ty!' password ${db_password}
+```
+- Test if the password changes were taken into effect:
+```
+mysql -u root -p${db_password} -e 'show databases;'
+```
+You should see a list of databases being returned:
+```
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| registry           |
+| streamline         |
+| sys                |
++--------------------+
+```
+
 ## Use your Cluster
 
 ### To connect using Putty from Windows laptop
