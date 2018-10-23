@@ -49,8 +49,38 @@ Install MySQL and other prerequisites packages
 
 ```
 yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
-yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc
+yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc curl ntp openssl python zlib wget unzip openssh-clients
 ```
+
+#### Apply Prerequisites for Ambari Server deployment
+
+- Disable ipv6: Create the file /etc/sysctl.d/99-hadoop-ipv6.conf containing the following configuration settings:
+```
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+net.ipv6.conf.lo.disable_ipv6 = 1
+```
+- Apply the configuration changes using the following command:
+```
+sysctl -e -p /etc/sysctl.d/99-hadoop-ipv6.conf
+```
+- Disable Transparent Huge Pages:
+
+Check the existing setting. The value inside the brackets is the existing setting:
+```
+cat /sys/kernel/mm/transparent_hugepage/enabled
+cat /sys/kernel/mm/transparent_hugepage/defrag
+```
+If the value is \[always\], you can change it as follows:
+```
+echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
+echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
+```
+
+
+
+
+
 #### Setup MySQL Databases
 
 - Enable and start MySQL service:
