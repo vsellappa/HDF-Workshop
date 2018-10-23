@@ -186,7 +186,7 @@ You should see a list of databases being returned:
 +--------------------+
 ```
 
-### Deploy Ambari
+## Deploy Ambari
 
 1. Download the Ambari repository
 ```
@@ -229,7 +229,25 @@ ambari-server setup -j /usr/java/default -s
 ```
 ambari-server start
 ```
-Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
+Make sure Ambari starts successfully.
+
+5. Ambari Server post-install steps
+Setup MySQL JDBC Driver with Ambari:
+```
+ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+```
+Install HDF MPack:
+```
+export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"  
+```
+Restart Ambari
+```
+ambari-server restart
+```
+
+## Deploy HDP and HDF
+
+In this section, please proceed with an HDP + HDF installation using the Ambari wizard. Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
 
 
 
