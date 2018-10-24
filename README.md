@@ -35,7 +35,7 @@
 
 This lab is to deploy HDF.
 
-You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Login to the VM as root as a starting point for this lab.
+You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Open an ssh session on your allocated VM and switch to root as a starting point for this lab (using ```sudo sh``` or ```sudo -i```).
 
 For complete instructions, you can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
 
@@ -249,59 +249,46 @@ ambari-server restart
 
 In this section, please proceed with an HDP + HDF installation using the Ambari wizard. Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
 
+1. For the version, select HDP-3.0.1
+2. Choose RedHat7 for the Operating System
+3. For install options, enter the FQDN of your host (output of ```hostname -f``` on your VM) and for Host Registration, select ```Perform manual registration on hosts and do not use SSH```.
+4. Perform Host Registration. If it doesn't work, check the log.
+5. **For the Services to be installed, please only choose the following ones:**
+	- HDFS
+	- YARN + MapReduce2
+	- Tez
+	- Pig
+	- Zookeeper
+	- Storm
+	- Infra Solr
+	- Ambari Metrics
+	- Kafka
+	- Log Search
+	- Druid
+	- NiFi
+	- NiFi Registry
+	- Schema Registry
+	- Streaming Analytics Manager
+	- Superset
+	
+	You will get some warnings about Limited Functionality for not selecting Apache Atlas, and Apache Ranger. Just click ```Proceed 	Anyway```.
+6. For credentials, please use ```StrongPassword``` as the password for all components.
+7. For databases, select ```MYSQL``` for Druid Metadata Storage type and for Superset.
+8. Leave all other options by default, and keep clicking ```Next```.
+9. On the ```All Configurations``` tab, there is a bell in red. Click on the bell.
+10. For the required configuration, edit the parameters for the passwords and use ```StrongPassword``` as the password for all parameters.
+11. Click on ```Next``` and ```Deploy```.
+12. Wait for installation to complete.
 
+## Access your cluster
 
-## Use your Cluster
-
-### To connect using Putty from Windows laptop
-
-NOTE: The following instructions are for using Putty. You can also use other popular SSH tools such as [MobaXterm](https://mobaxterm.mobatek.net/) or [SmarTTY](http://smartty.sysprogs.com/)
-
-- Right click to download [this ppk key](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/hdf-workshop.ppk) > Save link as > save to Downloads folder
-- Use putty to connect to your node using the ppk key:
-  - Connection > SSH > Auth > Private key for authentication > Browse... > Select hdf-workshop.ppk
-![Image](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/putty.png)
-
-- Create a new seession called `hdf-workshop`
-   - For the Host Name use: centos@IP_ADDRESS_OF_EC2_NODE
-   - Click "Save" on the session page before logging in
-
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/putty-session.png)
-
-
-### To connect from Linux/MacOSX laptop
-
-- SSH into your EC2 node using below steps:
-- Right click to download [this pem key](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/hdf-workshop.pem)  > Save link as > save to Downloads folder
-- Copy pem key to ~/.ssh dir and correct permissions
-    ```
-    cp ~/Downloads/hdf-workshop.pem ~/.ssh/
-    chmod 400 ~/.ssh/hdf-workshop.pem
-    ```
- - Login to the ec2 node of the you have been assigned by replacing IP_ADDRESS_OF_EC2_NODE below with EC2 node IP Address (your instructor will provide this)
-    ```
-     ssh -i  ~/.ssh/hdf-workshop.pem centos@IP_ADDRESS_OF_EC2_NODE
-
-    ```
-
-  - To change user to root you can:
-    ```
-    sudo su -
-    ```
-
-
-#### Login to Ambari
+After installation:
 
 - Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
 
 - You will see a list of Hadoop components running on your node on the left side of the page
-  - They should all show green (ie started) status. If not, start them by Ambari via 'Service Actions' menu for that service
-
-#### NiFi Install
-
-- NiFi is installed at: /usr/hdf/current/nifi
-
-
+  - They should all show green (ie started) status. If not, start them by Ambari via 'Service Actions' menu for that service.
+  - If there are any errors starting any of the components, please start the service, check for any errors during startup and 		troubleshoot.
 
 -----------------------------
 
