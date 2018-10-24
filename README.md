@@ -352,14 +352,17 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5b.png)
 
 6. Configure the ConnectWebSocket Processor so it looks like below:
-	a. Under the properties tab set the WebSocket Client Controller Service
-	b. Set the WebSocket Client ID to AGP-HDF-WS-TEST
-	
+	..1. Under the properties tab set the WebSocket Client Controller Service
+	..2. Set the WebSocket Client ID to AGP-HDF-WS-TEST
 	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6.png)
-
-	c. Set the automatic termination
-	
+	..3. Set the automatic termination
 	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6b.png)
+
+7. Add an UpdateAttribute Processor to the canvas using the same method as previously:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7.png)
+
+..- Configure it to have a custom property called mime.type with the value of application/json:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7b.png)
 
 
 
