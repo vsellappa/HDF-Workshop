@@ -423,9 +423,14 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14b.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14c.png)
 
+15. Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```. Automatically terminate both on Success and Failure. The configuration should look like below.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step15.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step15b.png)
 
+16. Join the ReplaceText processor and the PutFile processor for successful relationships.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step16.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step16b.png)
 
-  - Step 6: Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```
 
 ##### Questions to Answer
 1. What does a full RSVP Json object look like?
