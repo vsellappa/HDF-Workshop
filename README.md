@@ -352,50 +352,51 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5b.png)
 
 6. Configure the ConnectWebSocket Processor so it looks like below:
-	..1. Under the properties tab set the WebSocket Client Controller Service
-	..2. Set the WebSocket Client ID to AGP-HDF-WS-TEST
-	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6.png)
-	..3. Set the automatic termination
-	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6b.png)
+  1. Under the properties tab set the WebSocket Client Controller Service
+  2. Set the WebSocket Client ID to AGP-HDF-WS-TEST
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6.png)
+  3. Set the automatic termination
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6b.png)
 
 7. Add an UpdateAttribute Processor to the canvas using the same method as previously:
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7.png)
+  - Configure it to have a custom property called mime.type with the value of application/json:
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7b.png)
 
-..- Configure it to have a custom property called mime.type with the value of application/json:
-![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7b.png)
+8. Join ConnectWebSocket Processor and the UpdateAttribute Processor using a text message for relationships.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step8.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step8b.png)
 
-
-
-  - Step 1: Add a ConnectWebSocket processor to the cavas
-      - In case you are using a downloaded template, the ControllerService will be prepopulated. You will need to enable the ControllerService. Double-click the processor and follow the arrow next to the JettyWebSocketClient
-      - Set WebSocket Client ID to your favorite number.
-  - Step 2: Add an UpdateAttribute procesor
-    - Configure it to have a custom property called ``` mime.type ``` with the value of ``` application/json ```
-  - Step 3. Add an EvaluateJsonPath processor and configure it as shown below:
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/jsonpath.png)
+9. Add an EvaluateJsonPath processor and configure it as shown below:
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/jsonpath.png)
 
     The properties to add are:
     ```
-    event.name    $.event.event_name
-
-    event.url     $.event.event_url
-
-    group.city    $.group.group_city
-
-    group.state   $.group.group_state
-
+    event.name    	$.event.event_name
+    event.url     	$.event.event_url
+    group.city    	$.group.group_city
+    group.state   	$.group.group_state
     group.country	$.group.group_country
-
     group.name		$.group.group_name
-
-    venue.lat		  $.venue.lat
-
-    venue.lon     $.venue.lon
-
+    venue.lat		$.venue.lat
+    venue.lon     	$.venue.lon
     venue.name		$.venue.venue_name
     ```
-  - Step 4: Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```
-  - Step 5: Add a ReplaceText processor and configure the Search Value to be ```([{])([\S\s]+)([}])``` and the Replacement Value to be
+
+10. Join the UpdateAttribute processor and EvaluateJsonPath processor.  Also add a failure relationship (Note: recursive join)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10b.png)
+
+11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. Also the Original  relationship needs to be automatically terminated.  Your configuration should look like below:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11b.png)
+
+12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJsaon Processor. Should look like the below.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12b.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12c.png)
+
+13. Add a ReplaceText processor and configure the Search Value to be ```([{])([\S\s]+)([}])``` and the Replacement Value to be
     ```
          {
         "event_name": "${event.name}",
@@ -414,6 +415,16 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
          }
       }
       ```
+  The processor should look like the below
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step13.png)
+
+14. Join the SplitJson processor and the ReplaceText processor. In addition add an on Failure recursive join.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14b.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14c.png)
+
+
+
   - Step 6: Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```
 
 ##### Questions to Answer
