@@ -432,7 +432,9 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step16b.png)
 
 17. Start the flow by clicking on the ```Play``` triangle icon in the Operate window:
-![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step17.png)
+
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step17.png)
+
 You should see tuples flowing after a couple of minutes.
 
 ##### Questions to Answer
