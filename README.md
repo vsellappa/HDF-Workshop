@@ -565,51 +565,69 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
   
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step9c.png)
   
-  - Connect the GenerateFlowFile to the Remote Process Group
+  - Connect the GenerateFlowFile to the Remote Process Group. Your canvas should look like the following:
   
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step9d.png)
     
 
-5. The next step is to generate the flow we need for MiNiFi. To do this do the following steps:
+10. The next step is to generate the flow we need for MiNiFi. To do this do the following steps:
 
    * Create a template for MiNiFi
-   * Select the GenerateFlowFile, the NiFi Flow Remote Processor Group, and the Connection between them (these are the only things needed for MiNiFi)
+   * Select the GenerateFlowFile, the NiFi Flow Remote Processor Group, and the Connection between them (these are the only things needed for MiNiFi).
    * Select the "Create Template" button from the toolbar
-   * Choose a name for your template
+   * Name your template: MiNiFi Flow
+   
+   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step10.png)
+  
+11. Now we need to download the template. Select ```Templates```
 
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step11.png)
 
-7. Now we need to download the template
-8. Now SCP the template you downloaded to the ````/tmp```` directory on your EC2 instance. If you are using Windows you will need to download WinSCP (https://winscp.net/eng/download.php)
+12. Now SCP the template you downloaded to the ````/tmp```` directory on your EC2 instance. If you are using Windows you will need to download WinSCP (https://winscp.net/eng/download.php)
+
+Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
+
 9.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
 
-    * Navigate to the minifi-toolkit directory (/usr/hdf/current/minifi-toolkit-0.4.0)
+    * Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
+    ```cd /usr/hdf/minifi-toolkit-0.5.0```
     * Transform the template that we downloaded using the following command:
 
-      ````sudo bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
+      ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
 
       For example:
 
-      ````sudo bin/config.sh transform /temp/MiNiFi_Flow.xml config.yml````
+      ````bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
 
-10. Next copy the ````config.yml```` to the ````minifi-0.4.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
-
+10. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
+```
+cd /usr/hdf/minifi-0.5.0/conf
+cp /usr/hdf/minifi-toolkit-0.5.0/config.yml .
+```
 11. That is it, we are now ready to start MiNiFi. To start MiNiFi from a command prompt execute the following:
 
   ```
-  cd /usr/hdf/current/minifi-0.4.0
-  sudo bin/minifi.sh start
+  cd /usr/hdf/minifi-0.5.0
+  bin/minifi.sh start
   tail -f logs/minifi-app.log
   ```
+12. Start your flows on NiFi by clicking on the ```Play``` triangle icon in the Operate window.
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step12.png)
 
 You should be able to now go to your NiFi flow and see data coming in from MiNiFi.
 
 You may tail the log of the MiNiFi application by
    ```
-   tail -f /usr/hdf/current/minifi/minifi-0.2.0/logs/minifi-app.log
+   tail -f /usr/hdf/minifi-0.5.0/logs/minifi-app.log
    ```
 If you see error logs such as "the remote instance indicates that the port is not in a valid state",
 it is because the Input Port has not been started.
 Start the port and you will see messages being accumulated in its downstream queue.
+
+13. You should see messages coming in through LogAttribute. Your canvas should look like the following:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step13.png)
 
 ------------------
 
