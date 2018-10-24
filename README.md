@@ -140,12 +140,12 @@ ln -sf /etc/alternatives/java_sdk /usr/java/default
 
 ### Setup MySQL Databases for HDP & HDF
 
-- Enable and start MySQL service:
+1. Enable and start MySQL service:
 ```
 sudo systemctl enable mysqld.service
 sudo systemctl start mysqld.service
 ```
-- Create the following mysql-setup.sql script:
+2. Create the following mysql-setup.sql script:
 ```
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'Secur1ty!'; 
 uninstall plugin validate_password;
@@ -163,22 +163,22 @@ GRANT ALL PRIVILEGES ON *.* TO 'druid'@'%' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'superset'@'%' WITH GRANT OPTION;
 commit;
 ```
-- Identify the password created by default and setup a new password. You can choose a password of your own and set it up in the following script. By default, it is StrongPassword:
+3. Identify the password created by default and setup a new password. You can choose a password of your own and set it up in the following script. By default, it is StrongPassword:
 ```
 #extract system generated Mysql password
 oldpass=$( grep 'temporary.*root@localhost' /var/log/mysqld.log | tail -n 1 | sed 's/.*root@localhost: //' )
 echo $oldpass
 export db_password=${db_password:-StrongPassword}
 ```
-- Run the script mysql-setup created previously:
+4. Run the script mysql-setup created previously:
 ```
 mysql -h localhost -u root -p"$oldpass" --connect-expired-password < mysql-setup.sql
 ```
-- Change root user password for mysql:
+5. Change root user password for mysql:
 ```
 mysqladmin -u root -p'Secur1ty!' password ${db_password}
 ```
-- Test if the password changes were taken into effect:
+6. Test if the password changes were taken into effect:
 ```
 mysql -u root -p${db_password} -e 'show databases;'
 ```
@@ -226,33 +226,33 @@ credential_shell_cmd=org.apache.hadoop.security.alias.CredentialShell
 ```
 This is to workaround some jdk changes disabling [TLSv1](https://bugzilla.redhat.com/show_bug.cgi?id=1577372)
 
-Start the Ambari agent:
+3. Start the Ambari agent:
 ```
 chkconfig ambari-agent on
 ambari-agent start
 ```
 
-3. Install Ambari server:
+4. Install Ambari server:
 ```
 yum install -y ambari-server
 ambari-server setup -j /usr/java/default -s
 ```
-4. Start Ambari
+5. Start Ambari server
 ```
 ambari-server start
 ```
 Make sure Ambari starts successfully.
 
-5. Ambari Server post-install steps
+6. Ambari Server post-install steps
 Setup MySQL JDBC Driver with Ambari:
 ```
 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 ```
-6. Install HDF MPack:
+7. Install HDF MPack:
 ```
 export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"  
 ```
-7. Restart Ambari
+8. Restart Ambari
 ```
 ambari-server restart
 ```
