@@ -245,7 +245,7 @@ Make sure Ambari starts successfully.
 
 ## Ambari Server post-install steps
 
-1.Setup MySQL JDBC Driver with Ambari:
+1. Setup MySQL JDBC Driver with Ambari:
 ```
 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 ```
@@ -335,7 +335,19 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
   A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/templates/HDF-Workshop_Lab1-Flow.xml)
 
 1. With a blank canvas, click on the Configuration gear icon in the Operate box on the left side of the UI:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step1.png)
 
+2. Under the CONTROLLER SERVICES tab, Add a JettyWebSocketClient service and click on the gear icon to edit the configure the controller service.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step2.png)
+
+3. Under the PROPERTIES tab add the value for URI for the last property WebSocket URI, and paste it for the empty value for WebSocket URI in bold. The value pasted is ```ws://stream.meetup.com/2/rsvps```Lab2_step3. Your configuration should look like this:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step3.png)
+
+4. Notice that the state for the Controller Service is Disabled. Click on the lightning icon on the right to enable it:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step4.png)
+
+5. Add a ConnectWebSocket processor to the canvas by dragging the icon on the page:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5.png)
 
 
   - Step 1: Add a ConnectWebSocket processor to the cavas
