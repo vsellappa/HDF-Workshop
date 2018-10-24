@@ -348,6 +348,19 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 
 5. Add a ConnectWebSocket processor to the canvas by dragging the icon on the page:
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5.png)
+  
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5b.png)
+
+6. Configure the ConnectWebSocket Processor so it looks like below:
+	a. Under the properties tab set the WebSocket Client Controller Service
+	b. Set the WebSocket Client ID to AGP-HDF-WS-TEST
+	
+	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6.png)
+
+	c. Set the automatic termination
+	
+	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6b.png)
+
 
 
   - Step 1: Add a ConnectWebSocket processor to the cavas
