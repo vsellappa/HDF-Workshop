@@ -243,16 +243,17 @@ ambari-server start
 ```
 Make sure Ambari starts successfully.
 
-6. Ambari Server post-install steps
-Setup MySQL JDBC Driver with Ambari:
+## Ambari Server post-install steps
+
+1.Setup MySQL JDBC Driver with Ambari:
 ```
 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 ```
-7. Install HDF MPack:
+2. Install HDF MPack:
 ```
 export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"  
 ```
-8. Restart Ambari
+3. Restart Ambari
 ```
 ambari-server restart
 ```
@@ -332,6 +333,9 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 
   ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab1.png)
   A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/templates/HDF-Workshop_Lab1-Flow.xml)
+
+1. With a blank canvas, click on the Configuration gear icon in the Operate box on the left side of the UI:
+
 
 
   - Step 1: Add a ConnectWebSocket processor to the cavas
