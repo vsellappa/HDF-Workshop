@@ -137,7 +137,7 @@ mkdir -p /usr/java
 ln -sf /etc/alternatives/java_sdk /usr/java/default
 ```
 
-### Setup MySQL Databases for HDF
+### Setup MySQL Databases for HDP & HDF
 
 - Enable and start MySQL service:
 ```
@@ -148,9 +148,18 @@ sudo systemctl start mysqld.service
 ```
 ALTER USER 'root'@'localhost' IDENTIFIED BY 'Secur1ty!'; 
 uninstall plugin validate_password;
-CREATE DATABASE registry DEFAULT CHARACTER SET utf8; CREATE DATABASE streamline DEFAULT CHARACTER SET utf8; 
-CREATE USER 'registry'@'%' IDENTIFIED BY 'StrongPassword'; CREATE USER 'streamline'@'%' IDENTIFIED BY 'StrongPassword'; 
-GRANT ALL PRIVILEGES ON registry.* TO 'registry'@'%' WITH GRANT OPTION ; GRANT ALL PRIVILEGES ON streamline.* TO 'streamline'@'%' WITH GRANT OPTION ; 
+CREATE DATABASE registry DEFAULT CHARACTER SET utf8; 
+CREATE DATABASE streamline DEFAULT CHARACTER SET utf8; 
+CREATE DATABASE druid DEFAULT CHARACTER SET utf8;
+CREATE DATABASE superset DEFAULT CHARACTER SET utf8;
+CREATE USER 'registry'@'%' IDENTIFIED BY 'StrongPassword'; 
+CREATE USER 'streamline'@'%' IDENTIFIED BY 'StrongPassword';
+CREATE USER 'druid'@'%' IDENTIFIED BY 'StrongPassword';
+CREATE USER 'superset'@'%' IDENTIFIED BY 'StrongPassword';
+GRANT ALL PRIVILEGES ON *.* TO 'registry'@'%' WITH GRANT OPTION ; 
+GRANT ALL PRIVILEGES ON *.* TO 'streamline'@'%' WITH GRANT OPTION ;
+GRANT ALL PRIVILEGES ON *.* TO 'druid'@'%' WITH GRANT OPTION;
+GRANT ALL PRIVILEGES ON *.* TO 'superset'@'%' WITH GRANT OPTION;
 commit;
 ```
 - Identify the password created by default and setup a new password. You can choose a password of your own and set it up in the following script. By default, it is StrongPassword:
@@ -236,11 +245,11 @@ Setup MySQL JDBC Driver with Ambari:
 ```
 ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
 ```
-Install HDF MPack:
+6. Install HDF MPack:
 ```
 export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"  
 ```
-Restart Ambari
+7. Restart Ambari
 ```
 ambari-server restart
 ```
@@ -279,6 +288,8 @@ In this section, please proceed with an HDP + HDF installation using the Ambari 
 10. For the required configuration, edit the parameters for the passwords and use ```StrongPassword``` as the password for all parameters.
 11. Click on ```Next``` and ```Deploy```.
 12. Wait for installation to complete.
+13. After installation will complete, Ambari will start all services. 
+If some of the services start-up fails, it will abort starting-up all remaining services, and your installation will complete but with all the services down. Do not panic. Start all services individually, starting up with core Hadoop services first (HDFS, Zookeeper, YARN, MapReduce) followed by all other services. For any service failing to start-up, please check the log.
 
 ## Access your cluster
 
@@ -287,7 +298,7 @@ After installation:
 - Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
 
 - You will see a list of Hadoop components running on your node on the left side of the page
-  - They should all show green (ie started) status. If not, start them by Ambari via 'Service Actions' menu for that service.
+  - They should all show green (ie started) status, except for SmartSense. If not, start them by Ambari via 'Service Actions' menu for that service.
   - If there are any errors starting any of the components, please start the service, check for any errors during startup and 		troubleshoot.
 
 -----------------------------
