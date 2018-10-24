@@ -223,6 +223,8 @@ credential_lib_dir=/var/lib/ambari-agent/cred/lib
 credential_conf_dir=/var/lib/ambari-agent/cred/conf
 credential_shell_cmd=org.apache.hadoop.security.alias.CredentialShell
 ```
+This is to workaround some jdk changes disabling [TLSv1](https://bugzilla.redhat.com/show_bug.cgi?id=1577372)
+
 Start the Ambari agent:
 ```
 chkconfig ambari-agent on
@@ -287,9 +289,10 @@ In this section, please proceed with an HDP + HDF installation using the Ambari 
 9. On the ```All Configurations``` tab, there is a bell in red. Click on the bell.
 10. For the required configuration, edit the parameters for the passwords and use ```StrongPassword``` as the password for all parameters.
 11. Click on ```Next``` and ```Deploy```.
-12. Wait for installation to complete.
+12. Wait for installation to complete. This should take anywhere from 30 to 60 minutes, depending on your VM performance.
 13. After installation will complete, Ambari will start all services. 
-If some of the services start-up fails, it will abort starting-up all remaining services, and your installation will complete but with all the services down. Do not panic. Start all services individually, starting up with core Hadoop services first (HDFS, Zookeeper, YARN, MapReduce) followed by all other services. For any service failing to start-up, please check the log.
+If some of the services start-up fails, it will abort starting-up all remaining services, and your installation will complete but with all the services down. Do not panic. Start all services individually, starting up with core Hadoop services first (HDFS, Zookeeper, YARN, MapReduce) followed by all other services with the exception of Smartsense (You can put Smartsense in Maintenance Mode). 
+For any service failing to start-up, please check the log.
 
 ## Access your cluster
 
