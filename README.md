@@ -332,21 +332,27 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
  Our final flow for this lab will look like the following:
 
   ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab1.png)
+  
   A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/templates/HDF-Workshop_Lab1-Flow.xml)
 
 1. With a blank canvas, click on the Configuration gear icon in the Operate box on the left side of the UI:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step1.png)
 
 2. Under the CONTROLLER SERVICES tab, Add a JettyWebSocketClient service and click on the gear icon to edit the configure the controller service.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step2.png)
 
 3. Under the PROPERTIES tab add the value for URI for the last property WebSocket URI, and paste it for the empty value for WebSocket URI in bold. The value pasted is ```ws://stream.meetup.com/2/rsvps```Lab2_step3. Your configuration should look like this:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step3.png)
 
 4. Notice that the state for the Controller Service is Disabled. Click on the lightning icon on the right to enable it:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step4.png)
 
 5. Add a ConnectWebSocket processor to the canvas by dragging the icon on the page:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5.png)
   
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step5b.png)
@@ -359,15 +365,20 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step6b.png)
 
 7. Add an UpdateAttribute Processor to the canvas using the same method as previously:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7.png)
+  
   - Configure it to have a custom property called mime.type with the value of application/json:
+  
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step7b.png)
 
 8. Join ConnectWebSocket Processor and the UpdateAttribute Processor using a text message for relationships.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step8.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step8b.png)
 
 9. Add an EvaluateJsonPath processor and configure it as shown below:
+
 ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/jsonpath.png)
 
     The properties to add are:
@@ -384,14 +395,17 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
     ```
 
 10. Join the UpdateAttribute processor and EvaluateJsonPath processor.  Also add a failure relationship (Note: recursive join)
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10b.png)
 
 11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. Also the Original  relationship needs to be automatically terminated.  Your configuration should look like below:
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11b.png)
 
 12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJsaon Processor. Should look like the below.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12b.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12c.png)
@@ -416,18 +430,22 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
       }
       ```
   The processor should look like the below
+  
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step13.png)
 
 14. Join the SplitJson processor and the ReplaceText processor. In addition add an on Failure recursive join.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14b.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step14c.png)
 
 15. Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```. Automatically terminate both on Success and Failure. The configuration should look like below.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step15.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step15b.png)
 
 16. Join the ReplaceText processor and the PutFile processor for successful relationships.
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step16.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step16b.png)
 
@@ -445,6 +463,22 @@ You should see tuples flowing after a couple of minutes.
 4. Why are we using the Update Attribute processor to add a mime.type?
 4. How can you cange the flow to get the member photo from the Json and download it.
 
+18. After completing this lab, create a new Process Group by dragging onto the canvas the Process Group icon and call it Lab2:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step18.png)
+
+19. Select all the components of your flow including processors, and links between processors by pressing shift and selecting an area of the canvas which contains all the flow. You will see a rectangle being drawn in the canvas corresponding to the area selected. You may need to zoom out. 
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step19.png)
+
+20. Double-click on the Lab2 process group. When a new canvass opens for the Lab2 process group, right-click and select ``` Paste ```. You should now have the entire flow pasted into this process group.
+
+21. Click on the main NiFi flow to go back on the main canvas. Select the flow as per step 19, right-click and select ``` Delete ```.
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step21.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step21b.png)
+
+You should now have an empty canvas to start on Lab 3.
 
 ------------------
 
@@ -453,6 +487,17 @@ You should see tuples flowing after a couple of minutes.
   ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3.png)
   A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/templates/MiNiFi_Flow.xml)
 
+## Download and Install MiniFi
+
+Run all the below commands as root:
+```
+wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-0.5.0-bin.tar.gz
+wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-toolkit-0.5.0-bin.tar.gz
+cp minifi-0.5.0-bin.tar.gz /usr/hdf
+cd /usr/hdf
+tar zxvf minifi-0.5.0-bin.tar.gz
+tar xzvf minifi-toolkit-0.5.0-bin.tar.gz
+```
 
 ## Getting started with MiNiFi ##
 
@@ -466,7 +511,8 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 
 ## Setting up the Flow for NiFi
-**NOTE:** Before starting NiFi we need to enable Site-to-Site communication. To do that we will use Ambari to update the required configuration. In Ambari the below property values can be found at ````http://<EC2_NODE>:8080/#/main/services/NIFI/configs```` .
+
+1. Before starting NiFi we need to enable Site-to-Site communication. To do that we will use Ambari to update the required configuration. In Ambari the below property values can be found at ````http://<ambari_url>:8080/#/main/services/NIFI/configs```` .
 
 * Change:
   ````
@@ -478,23 +524,52 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
    		nifi.remote.input.socket.port=10000
 
   ```
-* Restart NiFi via Ambari
+  Save the configuration changes. Click on ```PROCEED ANYWAY``` if receiving warnings.
+  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step1.png)
 
+2. Restart NiFi via Ambari
 
-Now we should be ready to create our flow. To do this do the following:
+3. Access the NiFi UI from Ambari or ```http://<public_IP_addr>:9090/nifi/```
 
-1.	The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi".
+4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi": ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step4.png)
 
-2. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step4b.png)
 
-3.	Now that we have the input port and the processor to handle our data, we need to connect them.
+5. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
 
-4.  We are now ready to build the MiNiFi side of the flow. To do this do the following:
-	* Add a GenerateFlowFile processor to the canvas (don't forget to configure the properties on it)
-	* Add a Remote Processor Group to the canvas
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step5.png)
 
-           For the URL copy and paste the URL for the NiFi UI from your browser
-   * Connect the GenerateFlowFile to the Remote Process Group
+6. On the Settings tab, under Auto-terminate relationships, select the checkbox next to Success. This will terminate FlowFiles after this processor has successfully processed them.
+
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step5b.png)
+
+7. Also on the Settings tab, set the Bulletin level to Info. This way, when the dataflow is running, this processor will display the bulletin icon, and the user may hover over it with the mouse to see the attributes that the processor is logging.
+
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step7.png)
+
+8. Now that we have the input port and the processor to handle our data, we need to connect them. After creating the connection your data flow should look like this:
+
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step8.png)
+
+9. We are now ready to build the MiNiFi side of the flow. To do this do the following:
+  - Add a GenerateFlowFile processor to the canvas. On the Scheduling tab, set Run schedule to: 5 sec. Note that the GenerateFlowFile processor can create many FlowFiles very quickly; that's why setting the Run schedule is important so that this flow does not overwhelm the system NiFi is running on.
+  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9.png)
+  
+  - On the Properties tab, set File Size to: 10 kb	
+  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9b.png)
+  
+  - Add a Remote Processor Group to the canvas. For the URL copy and paste the URL for the NiFi UI from your browser:
+  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9c.png)
+  
+  - Connect the GenerateFlowFile to the Remote Process Group
+  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9d.png)
+  
+  
 
 5. The next step is to generate the flow we need for MiNiFi. To do this do the following steps:
 
