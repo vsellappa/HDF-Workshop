@@ -285,7 +285,7 @@ In this section, please proceed with an HDP + HDF installation using the Ambari 
 	You will get some warnings about Limited Functionality for not selecting Apache Atlas, and Apache Ranger. Just click ```Proceed 	Anyway```.
 6. For credentials, please use ```StrongPassword``` as the password for all components.
 7. For databases, select ```MYSQL``` for Druid Metadata Storage type and for Superset.
-8. Leave all other options by default, and keep clicking ```Next```.
+8. In the superset configuration, in the ```ADVANCED``` tab, section ```Advanced superset```, please set SUPERSET_WEBSERVER_PORT to ```19088```. Leave all other options by default, and keep clicking ```Next```.
 9. On the ```All Configurations``` tab, there is a bell in red. Click on the bell.
 10. For the required configuration, edit the parameters for the passwords and use ```StrongPassword``` as the password for all parameters.
 11. Click on ```Next``` and ```Deploy```.
