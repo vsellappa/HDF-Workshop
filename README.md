@@ -303,6 +303,8 @@ After installation:
 - You will see a list of Hadoop components running on your node on the left side of the page
   - They should all show green (ie started) status, except for SmartSense. If not, start them by Ambari via 'Service Actions' menu for that service.
   - If there are any errors starting any of the components, please start the service, check for any errors during startup and 		troubleshoot.
+  - Once all services are started, please click on the NiFi service. On the right hand side, you will see a section called ```Quick Links```. Click on ```NiFi UI```. 
+  - You are now ready to start the Lab 2.
 
 -----------------------------
 
