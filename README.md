@@ -526,50 +526,49 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
   ```
   Save the configuration changes. Click on ```PROCEED ANYWAY``` if receiving warnings.
   
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step1.png)
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step1.png)
 
 2. Restart NiFi via Ambari
 
 3. Access the NiFi UI from Ambari or ```http://<public_IP_addr>:9090/nifi/```
 
-4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi": ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step4.png)
+4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi": ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step4.png)
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step4b.png)
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step4b.png)
 
 5. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step5.png)
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step5.png)
 
 6. On the Settings tab, under Auto-terminate relationships, select the checkbox next to Success. This will terminate FlowFiles after this processor has successfully processed them.
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step5b.png)
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step5b.png)
 
 7. Also on the Settings tab, set the Bulletin level to Info. This way, when the dataflow is running, this processor will display the bulletin icon, and the user may hover over it with the mouse to see the attributes that the processor is logging.
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step7.png)
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step7.png)
 
 8. Now that we have the input port and the processor to handle our data, we need to connect them. After creating the connection your data flow should look like this:
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step8.png)
+![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step8.png)
 
 9. We are now ready to build the MiNiFi side of the flow. To do this do the following:
   - Add a GenerateFlowFile processor to the canvas. On the Scheduling tab, set Run schedule to: 5 sec. Note that the GenerateFlowFile processor can create many FlowFiles very quickly; that's why setting the Run schedule is important so that this flow does not overwhelm the system NiFi is running on.
   
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9.png)
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step9.png)
   
   - On the Properties tab, set File Size to: 10 kb	
   
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9b.png)
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step9b.png)
   
   - Add a Remote Processor Group to the canvas. For the URL copy and paste the URL for the NiFi UI from your browser:
   
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9c.png)
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step9c.png)
   
   - Connect the GenerateFlowFile to the Remote Process Group
   
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/lab3_step9d.png)
-  
-  
+  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step9d.png)
+    
 
 5. The next step is to generate the flow we need for MiNiFi. To do this do the following steps:
 
