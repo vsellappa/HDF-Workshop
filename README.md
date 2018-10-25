@@ -785,7 +785,7 @@ As you type messages in the producer window they should appear in the consumer w
 
         ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/add_schema_dialog.png)
 
-        For the Schema Text you can download it [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
+        For the Schema Text you can download it [here] (https://raw.githubusercontent.com/zoharsan/HDFWorkshop/blob/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
         Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
 	
