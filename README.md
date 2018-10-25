@@ -583,7 +583,7 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step11.png)
 
-12. Now SCP the template you downloaded to the ````/tmp```` directory on your EC2 instance. If you are using Windows you will need to download WinSCP (https://winscp.net/eng/download.php)
+12. Now SCP the template you downloaded to the ````/tmp```` directory on your VM. If you are using Windows on your workstation, you will need to download WinSCP (https://winscp.net/eng/download.php)
 
 Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
 
@@ -637,11 +637,11 @@ Start the port and you will see messages being accumulated in its downstream que
 In this lab we are going to explore creating, writing to and consuming Kafka topics. This will come in handy when we later integrate Kafka with NiFi and Streaming Analytics Manager.
 
 1. Creating a topic
-  - Step 1: Open an SSH connection to your EC2 Node.
-  - Step 2: Naviagte to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 1: Open an SSH connection to your VM as root.
+  - Step 2: Naviagte to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    #cd /usr/hdf/current/kafka-broker/
+    #cd /usr/hdp/current/kafka-broker
     ````
 
   - Step 3: Create a topic using the kafka-topics.sh script
@@ -658,19 +658,19 @@ In this lab we are going to explore creating, writing to and consuming Kafka top
     ````
 
 2. Testing Producers and Consumers
-  - Step 1: Open a second terminal to your EC2 node and navigate to the Kafka directory
+  - Step 1: Open a second terminal on your VM and navigate to the Kafka directory
   - In one shell window connect a consumer:
   ````
+ cd /usr/hdp/current/kafka-broker
  bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic first-topic
 ````
 
     Note: using –from-beginning will tell the broker we want to consume from the first message in the topic. Otherwise it will be from the latest offset.
 
-  - In the second shell window connect a producer:
+  - In the second shell window connect a producer. Customize the FQDN in the broker-list with the hostname of your VM:
 ````
-bin/kafka-console-producer.sh --broker-list demo.hortonworks.com:6667 --topic first-topic
+bin/kafka-console-producer.sh --broker-list bamako.field.hortonworks.com:6667 --topic first-topic
 ````
-
 
 - Sending messages. Now that the producer is  connected  we can type messages.
   - Type a message in the producer window
@@ -678,7 +678,9 @@ bin/kafka-console-producer.sh --broker-list demo.hortonworks.com:6667 --topic fi
 - Messages should appear in the consumer window.
 
 - Close the consumer (ctrl-c) and reconnect using the default offset, of latest. You will now see only new messages typed in the producer window.
-
+````
+bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
+````
 - As you type messages in the producer window they should appear in the consumer window.
 
 ------------------
