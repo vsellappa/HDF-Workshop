@@ -420,7 +420,7 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
         	"lon": "${venue.lon}",
         	"name": "${venue.name}"
         },
-        "group" : {
+        "meetupgroup" : {
           "group_city" : "${group.city}",
           "group_country" : "${group.country}",
           "group_name" : "${group.name}",
