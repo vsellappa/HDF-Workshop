@@ -753,10 +753,10 @@ As you type messages in the producer window they should appear in the consumer w
 
 1. Creating the topic
   - Step 1: Open an SSH connection to your VM.
-  - Step 2: Navigate to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    #cd /usr/hdf/current/kafka-broker/
+    #cd /usr/hdp/current/kafka-broker/
     ````
 
   - Step 3: Create a topic using the kafka-topics.sh script
@@ -775,9 +775,10 @@ As you type messages in the producer window they should appear in the consumer w
 2. Adding the Schema to the Schema Registry
   - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this from the either the ```Quick Links``` drop down in Ambari, as shown below:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/registry_quick_link.png)
+    ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_2_step1.png)
 
-    or by going to ````http://<EC2_NODE>:17788````
+    or by going to ````http://<host-FQDN>:7788````
+    
   - Step 2: Create Meetup RSVP Schema in the Schema Registry
     1. Click on “+” button to add new schemas. A window called “Add New Schema” will appear.
     2. Fill in the fields of the ````Add Schema Dialog```` as follows:
@@ -786,19 +787,21 @@ As you type messages in the producer window they should appear in the consumer w
 
         For the Schema Text you can download it [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
-        Once the schema information fields have been filled and schema uploaded, click **Save**.
-
-3. We are now ready to integrate the schema with NiFi
-  - Step 0: Remove the PutFile and PublishKafka_1_0 processors from the canvas, we will not need them for this section.
-  - Step 1: Add a UpdateAttribute processor to the canvas.
-  - Step 2: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
-  - Step 3: Configure the UpdateAttribute processor as shown below:
+        Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
+	
+	![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_2_step2.png)
+	
+   3. We are now ready to integrate the schema with NiFi
+      - Step 1: Remove the PutFile and PublishKafka_1_0 processors from the canvas, we will not need them for this section. Before 	removing the processors, you will need to remove the links between ReplaceText and these processors. Select the links/processors on the canvas, and press delete.
+      - Step 2: Add a UpdateAttribute processor to the canvas.
+      - Step 3: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
+      - Step 4: Configure the UpdateAttribute processor as shown below:
 
     ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/update_attribute_schema_name.png)
 
-  - Step 4: Add a JoltTransformJSON processor to the canvas.
-  - Step 5: Add a routing for the success relationship of the UpdateAttribute processor to the JoltTransformJSON processor added in Step 5.
-  - Step 6: Configure the JoltTransformJSON processor as shown below:
+  - Step 5: Add a JoltTransformJSON processor to the canvas.
+  - Step 6: Add a routing for the success relationship of the UpdateAttribute processor to the JoltTransformJSON processor added in Step 5.
+  - Step 7: Configure the JoltTransformJSON processor as shown below:
 
     ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/jolt_transform_config.png)
 
@@ -812,26 +815,64 @@ As you type messages in the producer window they should appear in the consumer w
       }
     }
   ``
-  - Step 7: Add a LogAttribute processor to the canvas.
-  - Step 8: Add a routing for the failure relationship of the JoltTransformJSON processor to the LogAttribute processor added in Step 7.
-  - Step 9: Add a PublishKafkaRecord_1_0 to the canvas.
-  - Step 10: Add a routing for the success relationship of the JoltTransformJSON processor to the PublishKafkaRecord_1_0 processor added in Step 9.
-  - Step 11: Configure the PublishKafkaRecord_1_0 processor to look like the following:
+  - Step 8: Add a LogAttribute processor to the canvas. In the settings tab of the processor, select ```success``` in the ```Automatically Terminate Relationships```.
+  - Step 9: Add a routing for the failure relationship of the JoltTransformJSON processor to the LogAttribute processor added in Step 8.
+  - Step 10: Add a PublishKafkaRecord_1_0 to the canvas.
+  - Step 11: Add a routing for the success relationship of the JoltTransformJSON processor to the PublishKafkaRecord_1_0 processor added in Step 10.
+  - Step 12: Configure the PublishKafkaRecord_1_0 processor to look like the following:
+	- Set Kafka Brokers to: ```<host-FQDN>:6667```
+	- Set Topic Name to: ```meetup_rsvp_avro```
+	- Set Use Transactions to: ```false```
+	- Set Record Reader to: ```JsonTreeReader```. Note that you will have to first Select ```Create new Service...``` from the drop down.
+	- Set Record Writer to: ```AvroRecordSetWriter```. Note that you will have to first Select ```Create new Service...``` from the drop down.
+	
+    ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_2_step12.png)
+       
+       - In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships``` like you did in the previous lab.
+       - Create a failure recursive join on the processor itself like you did in the previous lab.
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/publishkafka_record_configuration.png)
+  - Step 13: When you configure the JsonTreeReader and AvroRecordSetWriter, you will first need to configure a schema registry controller service. The schema registry controller service we are going to use is the 'HWX Schema Registry'.
+  
+     - Click on the Configuration gear icon in the Operate box on the left side of the UI:
 
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step1.png)
 
-  - Step 12: When you configure the JsonTreeReader and AvroRecordSetWriter, you will first need to configure a schema registry controller service. The schema registry controller service we are going to use is the 'HWX Schema Registry', it should be configured as shown below:
+     - Click on the '+' sign on the right hand side of the Controller Services window and select ```HortonworksSchemaRegistry```.
+     
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step13_1.png)
+     
+     - Click on the settings (gear icon) for HortonworksSchemaRegistry:
+     
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step13_2.png)
+      
+     - It should be configured as shown below. Customize the URL with the actual FQDN of your VM:
 
     ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/hwx_schema_registry_config.png)
+     
+     - Enable the HortonworksSchemaRegistry service controller by clicking on the lightning icon, next to the setting/gear icon:
+     
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step13_3.png)
+     
+   - Step 14: Configure the JsonTreeReader. 
+   
+     - Click on the setting/gear icon next to JsonTreeReader controller service:
+     
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step14.png)
+     
+     - Configure JsonTreeReader as shown below:
 
-  - Step 13: Configure the JsonTreeReader as shown below:
+     ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step14_2.png)
+    
+     - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/json_tree_reader_config.png)
+  - Step 15: Configure the AvroRecordSetWriter:
+  
+     - Click on the setting/gear icon next to AvroRecordSetWriter controller service:	
+     - Configure AvroRecordSetWriter as shown below:
 
-  - Step 14: Configure the AvroRecordSetWriter as shown below:
-
-      ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/avro_recordset_writer.png)
+      ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step15.png)
+      
+     - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
     After following the above steps this section of your flow should look like the following:
 
@@ -839,9 +880,10 @@ As you type messages in the producer window they should appear in the consumer w
 
 
 4. Start the NiFi flow
-5. In a terminal window to your EC2 node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_avro```` topic:
+5. In a terminal window to your VM, navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_avro```` topic:
 
     ````
+    cd /usr/hdp/current/kafka-broker
     bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic meetup_rsvp_avro
     ````
 
