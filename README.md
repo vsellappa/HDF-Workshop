@@ -797,7 +797,7 @@ As you type messages in the producer window they should appear in the consumer w
       - Step 3: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
       - Step 4: Configure the UpdateAttribute processor as shown below:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/update_attribute_schema_name.png)
+   ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/update_attribute_schema_name.png)
 
   - Step 5: Add a JoltTransformJSON processor to the canvas.
   - Step 6: Add a routing for the success relationship of the UpdateAttribute processor to the JoltTransformJSON processor added in Step 5.
@@ -826,7 +826,7 @@ As you type messages in the producer window they should appear in the consumer w
 	- Set Record Reader to: ```JsonTreeReader```. Note that you will have to first Select ```Create new Service...``` from the drop down.
 	- Set Record Writer to: ```AvroRecordSetWriter```. Note that you will have to first Select ```Create new Service...``` from the drop down.
 	
-    ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_2_step12.png)
+    ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab6_step12.png)
        
        - In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships``` like you did in the previous lab.
        - Create a failure recursive join on the processor itself like you did in the previous lab.
