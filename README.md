@@ -404,7 +404,7 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step11b.png)
 
-12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJsaon Processor. Should look like the below.
+12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJason Processor. Should look like the below.
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12.png)
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step12b.png)
@@ -638,7 +638,7 @@ In this lab we are going to explore creating, writing to and consuming Kafka top
 
 1. Creating a topic
   - Step 1: Open an SSH connection to your VM as root.
-  - Step 2: Naviagte to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
     #cd /usr/hdp/current/kafka-broker
@@ -659,29 +659,31 @@ In this lab we are going to explore creating, writing to and consuming Kafka top
 
 2. Testing Producers and Consumers
   - Step 1: Open a second terminal on your VM and navigate to the Kafka directory
-  - In one shell window connect a consumer:
+  - Step 2: In one shell window connect a consumer:
   ````
- cd /usr/hdp/current/kafka-broker
- bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic first-topic
-````
+  cd /usr/hdp/current/kafka-broker
+  bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic first-topic
+  ````
 
-    Note: using –from-beginning will tell the broker we want to consume from the first message in the topic. Otherwise it will be from the latest offset.
+  Note: using –from-beginning will tell the broker we want to consume from the first message in the topic. Otherwise it will be from the   latest offset.
 
-  - In the second shell window connect a producer. Customize the FQDN in the broker-list with the hostname of your VM:
-````
-bin/kafka-console-producer.sh --broker-list bamako.field.hortonworks.com:6667 --topic first-topic
-````
+ - Step 3: In the second shell window connect a producer. Customize the FQDN in the broker-list with the hostname of your VM:
+ ````
+ bin/kafka-console-producer.sh --broker-list bamako.field.hortonworks.com:6667 --topic first-topic
+ ````
 
-- Sending messages. Now that the producer is  connected  we can type messages.
-  - Type a message in the producer window
+- Step 4: Sending messages. Now that the producer is  connected  we can type messages:
+          - Type a random message in the producer window
+	  - Messages should appear in the consumer window.
 
-- Messages should appear in the consumer window.
-
-- Close the consumer (ctrl-c) and reconnect using the default offset, of latest. You will now see only new messages typed in the producer window.
+- Step 5: Close the consumer (ctrl-c) and reconnect using the default offset, of latest. You will now see only new messages typed in the producer window.
 ````
 bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
 ````
-- As you type messages in the producer window they should appear in the consumer window.
+As you type messages in the producer window they should appear in the consumer window.
+
+- Step 6: Close both consumers and producers by using Ctrl+C on each session.
+
 
 ------------------
 
@@ -689,11 +691,11 @@ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
 
 ## Integrating Kafka with NiFi
 1. Creating the topic
-  - Step 1: Open an SSH connection to your EC2 Node.
-  - Step 2: Naviagte to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 1: Open an SSH connection on your VM.
+  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    #cd /usr/hdf/current/kafka-broker/
+    #cd /usr/hdp/current/kafka-broker/
     ````
 
   - Step 3: Create a topic using the kafka-topics.sh script
@@ -714,17 +716,31 @@ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
   - Step 2: Add a routing for the success relationship of the ReplaceText processor to the PublishKafka_1_0 processor added in Step 1 as shown below:
 
     ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/publishkafka.png)
+  
   - Step 3: Configure the topic and broker for the PublishKafka_1_0 processor,
-  where topic is meetup_rsvp_raw and broker is demo.hortonworks.com:6667.
+  where:
+     - Topic is ```meetup_rsvp_raw```
+     - Broker is ```<host-name-fqdn>:6667```
+     - Use Transactions is set to ```false```
+     
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab5_2_step3.png)
+  
+  - Step 4: In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships```.
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab5_2_step3b.png)
+  
+  - Step 5: Create a failure recursive join on the processor itself. Your flow should look like the following:
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab5_2_step3c.png)
 
 
 3. Start the NiFi flow
-4. In a terminal window to your EC2 node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_raw```` topic:
+
+4. In a terminal window to your VM node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_raw```` topic:
 
     ````
     bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic meetup_rsvp_raw
     ````
-
 
 5. Messages should now appear in the consumer window.
 
@@ -734,9 +750,10 @@ bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
 # Lab 6
 
 ## Integrating the Schema Registry
+
 1. Creating the topic
-  - Step 1: Open an SSH connection to your EC2 Node.
-  - Step 2: Naviagte to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 1: Open an SSH connection to your VM.
+  - Step 2: Navigate to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
     #cd /usr/hdf/current/kafka-broker/
