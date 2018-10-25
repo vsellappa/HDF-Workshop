@@ -137,6 +137,15 @@ yum install -y java-1.8.0-openjdk-devel
 mkdir -p /usr/java
 ln -sf /etc/alternatives/java_sdk /usr/java/default
 ```
+7. Add swap space as 32 GB of memory will not be sufficient for this lab:
+```
+dd if=/dev/zero of=/swapfile bs=4K count=1M
+chmod 600 /swapfile
+mkswap /swapfile
+swapon /swapfile
+free -m
+```
+You should see 4GB of swap space added in the free -m output above.
 
 ### Setup MySQL Databases for HDP & HDF
 
