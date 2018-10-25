@@ -38,11 +38,11 @@
         }      
     },
     {
-      "name": "group",
+      "name": "meetupgroup",
       "type": 
         {
           "type": "record",
-          "name": "group",
+          "name": "meetupgroup",
           "fields": [
             {
               "name": "group_city",
