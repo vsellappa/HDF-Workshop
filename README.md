@@ -25,9 +25,13 @@
   - Adding the Meetup Avro Schema
   - Sending Avro data to Kafka
 
-<!-- - [Lab 7](#lab-7) - Tying it all together with SAM
-  - Creating the Streaming Application
-  - Watching the dashboard -->
+- [Lab 7](#lab-7) - Real-time Analytics with SAM
+  - Preparing the SAM Environment
+  - Developing the SAM Application
+  - Deploying the SAM Application
+
+- [Lab 8](#lab-8) - Developing a real-time dashboard with SuperSet
+
 
 
 ---------------
@@ -907,54 +911,239 @@ As you type messages in the producer window they should appear in the consumer w
 
 # Lab 7
 
-## Tying it all together
-For this lab we are going to break from the Meetup RSVP data and use a fictious IoT Trucking application.
+## Real-time Analytics with SAM
 
-  - Step 1: SSH to your EC2 instance
-  - Step 2: We are now going to get a data loader running:
+For this lab we are going to consume data from the previous NiFi application and develop a simple application with SAM, which does some basic analytics on the data.
 
-    ````
-    cd /root/Data-Loader
-    nohup java -cp /root/Data-Loader/stream-simulator-jar-with-dependencies.jar  hortonworks.hdp.refapp.trucking.simulator.SimulationRegistrySerializerRunnerApp 20000 hortonworks.hdp.refapp.trucking.simulator.impl.domain.transport.Truck  hortonworks.hdp.refapp.trucking.simulator.impl.collectors.KafkaEventSerializedWithRegistryCollector 1 /root/Data-Loader/routes/midwest/ 10000 demo.hortonworks.com:6667 http://demo.hortonworks.com:7788/api/v1 ALL_STREAMS NONSECURE &
-    ````
-  - Step 3: Now that the data is flowing, instantiate the 'IoT Trucking' NiFi template.
-  - Step 4: Inspect the flow that is created and ensure there are no errors, if there are go ahead and correct those.
-  - Step 5: Start this section of the NiFi flow.
-  - Step 6: Go to your Ambari dashboard and navigate to the SAM UI, by selecting the following URL:
+### Prepare the SAM Environment.
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/SAM_URL_Link.png)
+1. Open the SAM UI from Ambari. From Ambari, click on Streaming Analytics Manager Service, then click on ```SAM UI``` from Quick Links on the right hand side of the Ambari console:
 
-  - Step 7: You should now see the SAM UI that looks like the following:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step1.png)
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/sam_default.png)
+The following screen will appear:
 
-  - Step 8: To inspect the application, click the icon in the top right hadn corner of the applicaiton and chose 'Edit', as shown below:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step1b.png)
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/sam_app_edit.png)
+2. Define the Service Pool. As described in the welcome screen, we first need to define a Service Pool. Click on the tool icon on the left-hand side tool bar and select Service Pool in the menu:
 
-  - Step 9: You shoudl now see a UI that looks like the following:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step2.png)
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/sam_edit.png)
+3. Update the Ambari URL corresponding to your cluster by replacing the placeholders in the URL with the following values:
+  - Ambari_host: Public IP of your VM.
+  - Port: 8080
+  - CLUSTER_NAME: Your cluster name
+  Then, click on the AUTO-ADD button
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step3.png)
+  
+  You will be prompted for your Ambari credentials. Enter admin/admin.
+  
+  Once the cluster has been added successfully, you will see it appear as a service pool:
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step3b.png)
+  
+4. Define a Development Environment. Click on the tool icon on the left-hand side toolbar and select Environments:  
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step4.png)
+  
+  - In the new screen, please click Add (Green hexagon with the ‘+’ sign on the top right):  
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step4b.png)
+  
+  - Create a new Environment called Development, and select all services (They should be highlighted in blue):
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step4c.png)
+  
+  - Then, click OK. The new environment will appear as a new tile:
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step4d.png)
+  
+  At this point, we are ready to develop a new SAM (Streaming Analytics Manager) Application.
+  
+5. Click on the application icon on the left hand side toolbar, and select ‘My Application’. Click on Add (Green hexagon on the top righ with the ‘+’ sign), and select ```New Application```:
 
-    Spend a moment to explore and dig into any of the components. Notice at the bottom right hand corner is states "Status Active", this indicates that the application is running.
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step5.png)
 
-  - Step 10: Verify that Storm the application is running using Storm Mon. To do this go back to your Ambari Dashboard and chose the "Storm Mon link" as shown below:
+- Enter the following Application NAME: ‘MeetupSamApp’. It’s important that there are no spaces in your application name, as this could potentially cause some issues with Storm. For the environment, please select ‘Development’ that we just created previously.
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/storm_mon_link.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab7_step5b.png)
 
-    That should bring up a UI that looks like the following:
+You will now have an empty canvas. We are ready to develop the SAM Application.
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/storm_mon_ui.png)
+### Develop the SAM Application
 
-  - Step 11: We are now ready to explore Superset, to do this go back to the Ambari dashboard and from the Drui service chose the "Quick Link" to "Superset" as shown below:
+1. Read data from Kafka. We first want to read data from source. As a source, we are going to use the Kafka topic on which we wrote with Apache NiFi on the previous section. 
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/superset_link.png)
+- From the various operators available on the processor menu, please select Kafka from SOURCE, then drag and drop it onto the canvas:
 
-  - Step 12: Exploring Superset -- following the link in Step 11 should take you to a UI that looks like the following:
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step1.png)
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/superset_welcome.png)
+- Double-click on the Kafka operator on the canvas, and enter the following values:
 
-  **NOTE: If you are prompted for a password use admin/admin**
+	- CLUSTER NAME: Your cluster name
+	- SECURITY PROTOCOL: PLAINTEXT
+	- BOOTSTRAP SERVERS: Leave default value
+	- KAFKA_TOPIC: meetup_rsvp_avro
+	- READER MASTER BRANCH: MASTER
+	- READER SCHEMA VERSION: 1
+	- CONSUMER GROUP ID: kafka_gid_0
+	
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step1b.png)
 
-    Spend some time exploring the dashboard and the datasources.
--->
+You will notice that the schema will appear on the output. The schema is retrieved from the schema registry.
+
+2. Ingest data into Druid. Druid is a column-oriented, open-source, distributed data store written in Java. Druid is designed to quickly ingest massive quantities of event data, and provide low-latency queries on top of the data. For real-time dashboards, we want to write data to Apache Druid and visualize the data later with a real-time dashboard implemented with Superset.
+
+- Select the Druid processor from SINK, then drag and drop it on the canvas:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step2.png)
+
+- At this point, link the ‘KAFKA’ and ‘DRUID’ operators by clicking on the green circle on the right hand side of the ‘KAFKA’ operator and bringing the arrow to the grey circle on the ‘DRUID’ operator:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step2b.png)
+
+- Double-click on the ```DRUID``` operator and enter the following values:
+
+	- DATASOURCE NAME: meetup-dsn
+	- DIMENSIONS: Add all the available dimensions from the drop down list.
+	- TIMESTAMP FIELD NAME: processingTime.
+	- WINDOW PERIOD: PT5M
+	- INDEX RETRY PERIOD: PT5M
+	- SEGMENT GRANULARITY: FIVE_MINUTE
+	- QUERY GRANULARITY: MINUTE
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step2c.png)
+
+3. As this is a JSON record with nested structures, we need to project all fields in order to do a SQL operation like an aggregate.
+
+- Select the ```PROJECTION``` processor and drag and drop it to the canvas:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step3.png)
+
+- Link the ‘KAFKA’ and ‘PROJECTION’ operators by clicking on the green circle on the right hand side of the ‘KAFKA’ operator and bringing the arrow to the grey circle on the ‘PROJECTION’ operator like you did in the previous step:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step3b.png)
+
+- Double-click on the PROJECTION operator:
+
+	- PROJECTION FIELDS: event_name, event_url
+	- Add the following PROJECTION EXPRESSION:
+		```
+		- venue.name: venue_name
+		- meetupgroup.group_city: group_city
+		- meetupgroup.group_country: group_country
+		- meetupgroup.group_name: group_name
+		- meetupgroup.group_state: group_state
+		- meetupgroup.urlkey: group_urlkey
+		- meetupgroup.topic_name: group_topic_name
+		```
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step3d.png)
+
+4. For our real-time analytics component, we want to aggregate in real-time the number of RSVPs per Country, and City across all Meetup Groups to have a real-time indication on the vitality of Meetups community in various geographies.
+
+- Select the AGGREGATE operator and drag and drop it to the canvas:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step4.png)
+
+- Link the PROJECTION and AGGREGATE  operators by clicking on the green circle on the right hand side of the PROJECTION operator and bringing the arrow to the grey circle on the AGGREGATE operator:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step4b.png)
+
+- Double-click on the AGGREGATE operator:
+
+	- KEYS: group_country, group_city
+	- WINDOW INTERVAL TYPE: Time
+	- WINDOW INTERVAL: 5 Minutes
+	- SLIDING INTERVAL: 5 Minutes
+	- TIMESTAMP FIELD: processingTime
+	- AGGREGATE EXPRESSION: COUNT(event_url)
+	- FIELDS NAME: rsvp_count
+	
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step4b.png)
+		
+Click OK.
+
+5. Write the aggregates on HDFS.
+
+- Select the HDFS Operator from the **SINK Operators** and drag and drop it to the canvas:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step5.png)
+
+- Link the AGGREGATE and HDFS  operators by clicking on the green circle on the right hand side of the AGGREGATE operator and bringing the arrow to the grey circle on the HDFS operator:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step5b.png)
+
+- Double-click on the HDFS Operator:
+
+	- CLUSTER: Your Cluster name
+	- HDFS URL: Default value associated with your cluster HDFS URI (Filled automatically)
+	- PATH: /tmp/rsvp-agg
+	- FLUSH COUNT: 10
+	- ROTATION POLICY: Time Based Rotation
+	- ROTATION INTERVAL Multiplier: 5
+	- ROTATION INTERVAL UNIT: MINUTES
+	- OUTPUT FIELDS: Select All
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step5c.png)
+
+6. We also want to persist on HDFS all the data received from Kafka.
+
+- Select the HDFS Operator from the **SINK Operators** and drag and drop it to the canvas:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step5.png)
+
+- Link the PROJECTION and HDFS  operators by clicking on the green circle on the right hand side of the PROJECTION operator and bringing the arrow to the grey circle on the HDFS operator:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step6.png)
+
+- Double-click on the HDFS Operator:
+
+	- CLUSTER: Your Cluster name
+	- HDFS URL: Default value associated with your cluster HDFS URI (Filled automatically)
+	- PATH: /tmp/meetup-rsvps
+	- FLUSH COUNT: 100
+	- ROTATION POLICY: Time Based Rotation
+	- ROTATION INTERVAL Multiplier: 3
+	- ROTATION INTERVAL UNIT: MINUTES
+	- OUTPUT FIELDS: Select All
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step6b.png)
+
+7. Your application is now ready. We are now ready to deploy. The SAM Application flow should look like:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7.png)
+
+- Click on Configure on the top right hand side of the screen:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7b.png)
+
+- Fill the values as below:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7c.png)
+
+- Run the SAM Application. On the bottom right of the canvas, click on Run icon:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7d.png)
+
+- Click OK on the window asking you to confirm the configuration. Give a few minutes for the application to deploy. You should get a notification that the application has been deployed successfully. The icon will now change to the following state. Do NOT click on Kill:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7e.png)
+
+- On the top left of your web browser window, click on ‘My Applications’ to get back to the main Application screen. You will be asked if you want to navigate away from the page. Just click OK:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step7f.png)
+
+
+8. On the main window, click on the 3 dots on the top right of the tile corresponding to your application, and click on 'Refresh' from time to time after waiting for a couple of minutes. You should see some tuples emitted and transferred in your application.
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step8.png)
+
+9. Go back to Ambari and Click on File View on the drop down from the Views Menu icon
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step9.png)
+
+10. Navigate to /tmp/meetups-rsvp and /tmp/rsvp-agg and preview the files. Note that you will need to wait at least 5 minutes of processing before seeing any file in /tmp/rsvp-agg, as these files are generated every 5 minutes.
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step9b.png)
+
