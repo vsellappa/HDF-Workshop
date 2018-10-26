@@ -903,11 +903,7 @@ As you type messages in the producer window they should appear in the consumer w
 
 5. Messages should now appear in the consumer window.
 
-
-<!--
-
 ------------------
-
 
 # Lab 7
 
@@ -1147,3 +1143,6 @@ Click OK.
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step9b.png)
 
+------------------
+
+# Lab 8
