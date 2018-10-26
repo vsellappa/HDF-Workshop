@@ -30,8 +30,10 @@
   - Developing the SAM Application
   - Deploying the SAM Application
 
-- [Lab 8](#lab-8) - Developing a real-time dashboard with SuperSet
-
+- [Lab 8](#lab-8) - Real-Time Data Visualization with Superset
+  - Locating the Druid Data source
+  - Create a Visualization
+  - Create a Superset Dashboard
 
 
 ---------------
@@ -1143,6 +1145,71 @@ Click OK.
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab72_step9b.png)
 
+Let this application run at least for 30-45 minutes to populate the Druid cube data source used for Lab 8.
+
 ------------------
 
 # Lab 8
+
+Superset is a Business Intelligence tool packaged with many features for designing, maintaining and enabling the storytelling of data through meaningful data visualizations for real-time data.
+
+In this section, we will explore data visualization with Superset for the Meetup dataset, that has been ingested into Druid, through the SAM application created in Lab 7. You should let your SAM application run at least for 30 minutes before starting the Lab 8. Otherwise, the Druid data source will not appear.
+
+1. Go to Ambari, and click on Druid. Make sure all Druid components are up.  Click on the Druid Coordinator console hyperlink from the Quick Links section:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step1.png)
+
+2. On the Druid console, you should see the meetup-dsn appear. If not, make sure it shows that indexing tasks are running, and that you have let the SAM application run for around 30 minutes.
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step2.png)
+
+3. Once you see the data source name, go back to Ambari and click on the Superset service. Click on Superset hyperlink from the Quick Links section:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step3.png)
+
+On the Superset window, login as admin/StrongPassword
+
+4. On Superset top menu, click on Sources and select 'Scan New Datasources' from the drop down:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step4.png)
+
+You should see the meetup-dsn source appearing on the list of Druid data sources:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step4b.png)
+
+5. Click on the actual data source name meetup-dsn. This should bring you to a new window to build a visualization. Click on the Visualization Type:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5.png)
+
+- Choose Sunburst:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5b.png)
+
+- In the new window, for Time Granularity choose '5 minutes' and for Hierarchy, choose these fields in the same order: group_country, group_city, group_name:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5c.png)
+
+- Click on Run Query at the top right. You will see a sunburst diagram appear. Click on its title to rename it and call it "Meetup RSVP per Geo".
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5d.png)
+
+- Click on 'Save' right next to 'Run Query' and save the visualization as follows, then click 'Save and Go to Dashboard':
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5e.png)
+
+- You will now go to the dashboard. Click on Actions on the right hand-side, and set Auto-refresh to every 5 minutes. From the same menu, click on 'Save the dashboard':
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab8_step5f.png)
+
+You should see this dashboard refresh every 5 minutes.\
+
+At this point, you can explore adding more visualizations, such as a timeline or a sankey. 
+
+------------------
+
+
+
+
+
+
+
