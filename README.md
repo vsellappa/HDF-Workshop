@@ -547,7 +547,9 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 3. Access the NiFi UI from Ambari or ```http://<public_IP_addr>:9090/nifi/```
 
-4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi": ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/Lab3_step4.png)
+4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi":
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step4.png)
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step4b.png)
 
