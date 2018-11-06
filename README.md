@@ -1,5 +1,5 @@
 # Contents
-- [Lab 1](#lab-1)
+- [Lab 1](#lab-1) - Deploy Environment
   - Install HDP & HDF
   - Bring up the Environment
 - [Lab 2](#lab-2) - Getting started with NiFi
