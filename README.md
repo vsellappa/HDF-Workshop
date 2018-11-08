@@ -143,7 +143,7 @@ yum install -y java-1.8.0-openjdk-devel
 mkdir -p /usr/java
 ln -sf /etc/alternatives/java_sdk /usr/java/default
 ```
-7. Add 8GB of swap space as 32 GB of memory will not be sufficient for this lab:
+7. This lab requires at least 40 GB of RAM on your VM. If you have 40 GB of RAM or more, you can skip this step. If you have 32 GB of RAM, please add 8GB of swap space as 32 GB of memory will not be sufficient for this lab:
 ```
 dd if=/dev/zero of=/swapfile bs=4K count=2M
 chmod 600 /swapfile
