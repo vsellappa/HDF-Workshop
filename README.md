@@ -410,10 +410,17 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
     venue.name		$.venue.venue_name
     ```
 
-10. Join the UpdateAttribute processor and EvaluateJsonPath processor.  Also add a failure relationship (Note: recursive join)
+10. Join the UpdateAttribute processor and EvaluateJsonPath processor.
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10.png)
+
+Also add a failure relationship (Note: recursive join)
+
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10b.png)
+
+Auto-terminate unmatched relationships in the settings tab:
+
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab2_step10c.png)
 
 11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. Also the Original  relationship needs to be automatically terminated.  Your configuration should look like below:
 
