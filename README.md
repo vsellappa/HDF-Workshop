@@ -517,6 +517,7 @@ Run all the below commands as root:
 wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-0.5.0-bin.tar.gz
 wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-toolkit-0.5.0-bin.tar.gz
 cp minifi-0.5.0-bin.tar.gz /usr/hdf
+cp minifi-toolkit-0.5.0-bin.tar.gz /usr/hdf
 cd /usr/hdf
 tar zxvf minifi-0.5.0-bin.tar.gz
 tar xzvf minifi-toolkit-0.5.0-bin.tar.gz
@@ -586,7 +587,11 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
   
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step9b.png)
   
-  - Add a Remote Processor Group to the canvas. For the URL copy and paste the URL for the NiFi UI from your browser:
+  - Add a Remote Processor Group to the canvas. Drag and drop a remote processor group to the canvas:
+  
+  ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step9b2.png)
+    
+  For the URL copy and paste the URL for the NiFi UI from your browser:
   
   ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step9c.png)
   
