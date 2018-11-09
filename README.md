@@ -612,7 +612,7 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
 
-9.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
+13.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
 
     * Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
     ```cd /usr/hdf/minifi-toolkit-0.5.0```
@@ -624,19 +624,19 @@ Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
 
       ````bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
 
-10. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
+14. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
 ```
 cd /usr/hdf/minifi-0.5.0/conf
 cp /usr/hdf/minifi-toolkit-0.5.0/config.yml .
 ```
-11. That is it, we are now ready to start MiNiFi. To start MiNiFi from a command prompt execute the following:
+15. That is it, we are now ready to start MiNiFi. To start MiNiFi from a command prompt execute the following:
 
   ```
   cd /usr/hdf/minifi-0.5.0
   bin/minifi.sh start
   tail -f logs/minifi-app.log
   ```
-12. Start your flows on NiFi by clicking on the ```Play``` triangle icon in the Operate window.
+16. Start your flows on NiFi by clicking on the ```Play``` triangle icon in the Operate window.
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step12.png)
 
@@ -650,7 +650,7 @@ If you see error logs such as "the remote instance indicates that the port is no
 it is because the Input Port has not been started.
 Start the port and you will see messages being accumulated in its downstream queue.
 
-13. You should see messages coming in through LogAttribute. Your canvas should look like the following:
+17. You should see messages coming in through LogAttribute. Your canvas should look like the following:
 
 ![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/Lab3_step13.png)
 
