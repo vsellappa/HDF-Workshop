@@ -776,7 +776,7 @@ As you type messages in the producer window they should appear in the consumer w
 
 ## Setting NiFi Registry:
 1. Open Nifi Registry from Ambari UI - 
-Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
+Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_01.png)
 
@@ -784,7 +784,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_2.png)
 
-3. Go to NiFi <FQDN>:9090, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
+3. Go to NiFi ```<FQDN>:9090```, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
 
 4. Right click on processor group to select Version Control.
 
@@ -842,7 +842,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
     ````
 
 2. Adding the Schema to the Schema Registry
-  - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this from the either the ```Quick Links``` drop down in Ambari, as shown below:
+  - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this from the either ```https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc``` drop down in Ambari, as shown below:
 
     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_2_step1.png)
 
@@ -854,7 +854,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
 
         ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/add_schema_dialog.png)
 
-        For the Schema Text you can download it [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/meetup_rsvp.asvc) and either copy and paste it or upload the file.
+        For the Schema Text you can download it [here]https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
         Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
 	
