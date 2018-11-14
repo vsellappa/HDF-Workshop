@@ -347,9 +347,9 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 
  Our final flow for this lab will look like the following:
 
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/lab1.png)
+  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/lab1.png)
   
-  A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/img/templates/HDF-Workshop_Lab1-Flow.xml)
+  A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/HDF-Workshop_Lab1-Flow.xml)
 
 1. With a blank canvas, click on the Configuration gear icon in the Operate box on the left side of the UI:
 
@@ -395,7 +395,7 @@ To get started we need to consume the data from the Meetup RSVP stream, extract 
 
 9. Add an EvaluateJsonPath processor and configure it as shown below:
 
-![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/jsonpath.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/jsonpath.png)
 
     The properties to add are:
     ```
@@ -507,8 +507,8 @@ You should now have an empty canvas to start on Lab 3.
 
 # Lab 3
 
-  ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/lab3.png)
-  A template for this flow can be found [here](https://raw.githubusercontent.com/apsaltis/HDF-Workshop/master/img/templates/MiNiFi_Flow.xml)
+  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/lab3.png)
+  A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/MiNiFi_Flow.xml)
 
 ## Download and Install MiniFi
 
@@ -745,7 +745,7 @@ As you type messages in the producer window they should appear in the consumer w
   - Step 1: Add a PublishKafka_1_0 processor to the canvas.
   - Step 2: Add a routing for the success relationship of the ReplaceText processor to the PublishKafka_1_0 processor added in Step 1 as shown below:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/publishkafka.png)
+    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/publishkafka.png)
   
   - Step 3: Configure the topic and broker for the PublishKafka_1_0 processor,
   where:
@@ -778,7 +778,7 @@ As you type messages in the producer window they should appear in the consumer w
 1. Open Nifi Registry from Ambari UI - 
 Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_1.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_01.png)
 
 2. Create a Bucket to do version control on NiFi Registry UI. 
 
@@ -852,7 +852,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
     1. Click on “+” button to add new schemas. A window called “Add New Schema” will appear.
     2. Fill in the fields of the ````Add Schema Dialog```` as follows:
 
-        ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/add_schema_dialog.png)
+        ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/add_schema_dialog.png)
 
         For the Schema Text you can download it [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
@@ -866,13 +866,13 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
       - Step 3: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
       - Step 4: Configure the UpdateAttribute processor as shown below:
 
-   ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/update_attribute_schema_name.png)
+   ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/update_attribute_schema_name.png)
 
   - Step 5: Add a JoltTransformJSON processor to the canvas.
   - Step 6: Add a routing for the success relationship of the UpdateAttribute processor to the JoltTransformJSON processor added in Step 5.
   - Step 7: Configure the JoltTransformJSON processor as shown below:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/jolt_transform_config.png)
+    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/jolt_transform_config.png)
 
     The JSON used in the 'Jolt Specification' property is as follows:
 
@@ -916,7 +916,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
       
      - It should be configured as shown below. Customize the URL with the actual FQDN of your VM:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/hwx_schema_registry_config.png)
+    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/hwx_schema_registry_config.png)
      
      - Enable the HortonworksSchemaRegistry service controller by clicking on the lightning icon, next to the setting/gear icon:
      
@@ -945,7 +945,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit <FQDN>:61080
 
     After following the above steps this section of your flow should look like the following:
 
-    ![Image](https://github.com/apsaltis/HDF-Workshop/raw/master/img/update_jolt_kafka_section.png)
+    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/update_jolt_kafka_section.png)
 
 
 4. Start the NiFi flow
