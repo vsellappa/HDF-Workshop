@@ -24,13 +24,15 @@
   - Creating the Kafka topic
   - Adding the Meetup Avro Schema
   - Sending Avro data to Kafka
-
-- [Lab 7](#lab-7) - Real-time Analytics with SAM
+- [Lab 7](#lab-7) - Integrating the NiFi Registry
+  - Working with NiFi Variables
+  - Creating NiFi Registry
+  - Perform flow changes and commit to Registry  
+- [Lab 8](#lab-8) - Real-time Analytics with SAM
   - Preparing the SAM Environment
   - Developing the SAM Application
   - Deploying the SAM Application
-
-- [Lab 8](#lab-8) - Real-Time Data Visualization with Superset
+- [Lab 9](#lab-9) - Real-Time Data Visualization with Superset
   - Locating the Druid Data source
   - Create a Visualization
   - Create a Superset Dashboard
@@ -951,7 +953,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 2. Create a Bucket to do version control on NiFi Registry UI. 
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_2.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_0Lab6_NR_62.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_02.png)
 
 3. Go to NiFi ```<FQDN>:9090```, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
 
@@ -1226,7 +1228,7 @@ Let this application run at least for 30-45 minutes to populate the Druid cube d
 
 ------------------
 
-# Lab 8
+# Lab 9
 
 Superset is a Business Intelligence tool packaged with many features for designing, maintaining and enabling the storytelling of data through meaningful data visualizations for real-time data.
 
