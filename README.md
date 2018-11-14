@@ -854,7 +854,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 
         ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/add_schema_dialog.png)
 
-        For the Schema Text you can download it [here]https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
+        For the Schema Text you can download it [here](https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
         Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
 	
