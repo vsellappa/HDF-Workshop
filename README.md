@@ -774,46 +774,6 @@ As you type messages in the producer window they should appear in the consumer w
 
 5. Messages should now appear in the consumer window.
 
-## Setting NiFi Registry:
-1. Open Nifi Registry from Ambari UI - 
-Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_01.png)
-
-2. Create a Bucket to do version control on NiFi Registry UI. 
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_2.png)
-
-3. Go to NiFi ```<FQDN>:9090```, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
-
-4. Right click on processor group to select Version Control.
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_3.png)
-
-5. The bucket created in NiFi Registry should automatically appear if it’s in the same cluster
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
-
-
-6. Make changes to canvas such as position or time (even position change of processor is tracked). 
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_5.png)
-
-
-7. You can see the changes that were made by selecting “Show Local Changes”
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_6.png)
-
-
-8. Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_7.png)
-
-9. The pushed changes will appear in Nifi Registry 
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_8.png)
-
-
 ------------------
 
 # Lab 6
@@ -962,6 +922,69 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 ------------------
 
 # Lab 7
+
+## Variables
+Nifi >1.4 provides UI based variable registry to help simplify the configuration management of flows across different environments.  
+
+Step 1: On the processor group Lab2 select "variables op"
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_01.png)
+
+Step 2: Using + symbol add new variable and add corresponding value to the variable. In this example we are adding a variable for Kafka topic.
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_02.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_03.png)
+
+Step 3: Apply the variable and close. 
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_04.png)
+
+Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
+
+## NiFi Registry:
+For this lab we are going to set up NiFi registry and use variables. NiFi registry provides a central location for storage and management of shared resources. It allows storing and managing versioned flows. 
+
+1. Open Nifi Registry from Ambari UI - 
+Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_01.png)
+
+2. Create a Bucket to do version control on NiFi Registry UI. 
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_2.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_0Lab6_NR_62.png)
+
+3. Go to NiFi ```<FQDN>:9090```, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
+
+4. Right click on processor group to select Version Control.
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_3.png)
+
+5. The bucket created in NiFi Registry should automatically appear if it’s in the same cluster
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
+
+
+6. Make changes to canvas such as position or time (even position change of processor is tracked). 
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_5.png)
+
+
+7. You can see the changes that were made by selecting “Show Local Changes”
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_6.png)
+
+
+8. Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_7.png)
+
+9. The pushed changes will appear in Nifi Registry 
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_8.png)
+
+------------------
+
+# Lab 8
 
 ## Real-time Analytics with SAM
 
