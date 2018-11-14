@@ -952,16 +952,16 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 
 2. Create a Bucket to do version control on NiFi Registry UI. 
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_2.png)
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_02.png)
 
-3. Go to NiFi ```<FQDN>:9090```, for the NiFi flow created create a processor group by selecting all the processors (using shift key) and then right click create processor group. 
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_021.png)
+ 
 
-4. Right click on processor group to select Version Control.
+3. Right click on processor group ```Lab2``` to select Version Control.
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_3.png)
 
-5. The bucket created in NiFi Registry should automatically appear if it’s in the same cluster
+4. The bucket created in NiFi Registry should automatically appear if it’s in the same cluster
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
 
