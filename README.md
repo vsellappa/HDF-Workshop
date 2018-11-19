@@ -925,23 +925,6 @@ As you type messages in the producer window they should appear in the consumer w
 
 # Lab 7
 
-## Variables
-Nifi >1.4 provides UI based variable registry to help simplify the configuration management of flows across different environments.  
-
-Step 1: On the processor group Lab2 select "variables op"
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_01.png)
-
-Step 2: Using + symbol add new variable and add corresponding value to the variable. In this example we are adding a variable for Kafka topic.
-
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_02.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_03.png)
-
-Step 3: Apply the variable and close. 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_04.png)
-
-Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
-
 ## NiFi Registry:
 For this lab we are going to set up NiFi registry and use variables. NiFi registry provides a central location for storage and management of shared resources. It allows storing and managing versioned flows. 
 
@@ -966,14 +949,35 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
 
 
-6. Make changes to canvas such as position or time (even position change of processor is tracked). 
+### 5. Variable Registry
+```Nifi >1.4``` provides UI based variable registry to help simplify the configuration management of flows across different environments.  
+
+Step 1: On the processor group Lab2 select "variables op"
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_01.png)
+
+Step 2: Using + symbol add new variable and add corresponding value to the variable. In this example we are adding a variable for Kafka topic.
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_02.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_03.png)
+
+Step 3: Apply the variable and close. 
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_04.png)
+
+Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
+
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
+
+
+6. Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_5.png)
 
 
 7. You can see the changes that were made by selecting “Show Local Changes”
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_6.png)
+![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_051.png)
 
 
 8. Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
