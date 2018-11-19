@@ -967,24 +967,24 @@ Step 3: Apply the variable and close.
 
 Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
 
 
-6. Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
+Step 5: Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_5.png)
 
 
-7. You can see the changes that were made by selecting “Show Local Changes”
+Step 6: You can see the changes that were made by selecting “Show Local Changes”
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_051.png)
 
 
-8. Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
+Step 7: Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_7.png)
 
-9. The pushed changes will appear in Nifi Registry 
+Step 8: The pushed changes will appear in Nifi Registry Lab6
 
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_8.png)
 
