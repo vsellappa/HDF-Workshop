@@ -967,7 +967,7 @@ Step 3: Apply the variable and close.
 
 Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
 
-![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/img/Lab6_VR_05.png)
+![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/img/Lab6_VR_05b.png)
 
 
 Step 5: Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
