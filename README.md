@@ -46,7 +46,7 @@ This lab is to deploy HDF.
 
 You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Open an ssh session on your allocated VM and switch to root as a starting point for this lab (using ```sudo sh``` or ```sudo -i```).
 
-For complete instructions, you can follow the [Official HDF 3.2 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.2.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.2. In the following instructions, we are applying these steps to deploy and install an HDF 3.2 environment.
+For complete instructions, you can follow the [Official HDF 3.3 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.3.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.3. In the following instructions, we are applying these steps to deploy and install an HDF 3.3 environment.
 
 ## Apply prerequisites and prepare the environment
 
@@ -268,7 +268,7 @@ ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connecto
 ```
 2. Install HDF MPack:
 ```
-export mpack_url="http://public-repo-1.hortonworks.com/HDF/centos7/3.x/updates/3.2.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.2.0.0-520.tar.gz"
+export mpack_url="http://public-repo-1.hortonworks.com/HDF/amazonlinux2/3.x/updates/3.3.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.3.0.0-165.tar.gz"
 ambari-server install-mpack --verbose --mpack=${mpack_url}
 ```
 3. Restart Ambari
