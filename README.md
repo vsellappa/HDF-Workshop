@@ -480,7 +480,7 @@ Auto-terminate unmatched relationships in the settings tab:
 
 You should see tuples flowing after a couple of minutes.
 
-##### Questions to Answer
+##### Optional: Questions to Answer
 1. What does a full RSVP Json object look like?
 2. How many output files do you end up with?
 3. How can you change the file name that Json is saved as from PutFile?
@@ -621,15 +621,10 @@ Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
 
 13.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
 
-    * Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
+- Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
     ```cd /usr/hdf/minifi-toolkit-0.5.0```
-    * Transform the template that we downloaded using the following command:
-
-      ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
-
-      For example:
-
-      ````bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
+- Transform the template that we downloaded using the following command: ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
+  Example: ````bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
 
 14. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
 ```
