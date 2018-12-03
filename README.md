@@ -944,7 +944,7 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
 
 
-### 5. Variable Registry
+## Variable Registry:
 ```Nifi >1.4``` provides UI based variable registry to help simplify the configuration management of flows across different environments.  
 
 Step 1: On the processor group Lab2 select "variables op"
