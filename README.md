@@ -2,8 +2,7 @@
 - [Lab 1](#lab-1) - Deploy Environment
   - Install HDP & HDF
   - Bring up the Environment
-
-- [Lab Start](#lab-start) - Refresh NiFi concepts  
+- [Lab Start](#lab-start) - Refresh NiFi concepts
 - [Lab 2](#lab-2) - Getting started with NiFi
   - Consuming the Meetup RSVP stream
   - Extracting JSON elements we are interested in
