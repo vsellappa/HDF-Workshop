@@ -2,6 +2,8 @@
 - [Lab 1](#lab-1) - Deploy Environment
   - Install HDP & HDF
   - Bring up the Environment
+
+- [Lab Start](#lab-start) - Refresh NiFi concepts  
 - [Lab 2](#lab-2) - Getting started with NiFi
   - Consuming the Meetup RSVP stream
   - Extracting JSON elements we are interested in
@@ -342,7 +344,7 @@ Processors actually perform the work. A processor is doing some combination of d
 A Process Group is a specific set of processes and their connections, which can receive data via input ports and send data out via output ports. In this manner, process groups allow creation of entirely new components simply by composition of other components.
 
 
-Keep the NiFi Docs : http://nifi.apache.org/docs.html specifically the User Guide handy.
+Keep the [NiFi Docs](http://nifi.apache.org/docs.html) specifically the User Guide handy.
 
 -----------------------------
 
@@ -533,7 +535,7 @@ You should see data flowing after a couple of minutes.
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21.png)
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21b.png)
 
-You should now have an empty canvas to start on Lab 3.
+You should now have an empty canvas to start for Lab 3.
 
 ------------------
 
@@ -658,7 +660,7 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step11.png)
 
-12. Copy the template you downloaded to the ````/tmp```` directory on your cluster. If you are using Windows on your workstation, you will need to download WinSCP (https://winscp.net/eng/download.php)
+12. Copy the template you downloaded to the ````/tmp```` directory on your cluster. If you are using Windows on your workstation, you will need to download [WinSCP](https://winscp.net/eng/download.php)
 
 On OSX and Linux :```scp -i <key.pem> MiNiFi_Flow.xml centos@<IPADDRESS>:/tmp/.```
 
@@ -706,7 +708,7 @@ Start the port and you will see messages being accumulated in its downstream que
 ##### Mandatory: Questions to Answer
 1. Look at the config.yml, whats the main property here that needs to be changed if you want to re-use the config?
 2. What happens when "From MiNiFI" processor is stopped? Why?
-3. How do you stop the MiNiFi?
+3. How do you stop the MiNiFi service?
 ------------------
 
 # Lab 4
