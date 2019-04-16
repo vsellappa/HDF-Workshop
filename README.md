@@ -328,112 +328,130 @@ After installation:
 
 -----------------------------
 
+# Lab Start
+
+Refreshing a few basic concepts around NiFi
+- Put simply NiFi was built to automate the flow of data between systems. While the term 'dataflow' is used in a variety of contexts, we use it here to mean the automated and managed flow of information between systems. This problem space has been around ever since enterprises had more than one system, where some of the systems created data and some of the systems consumed data.
+- Key terms
+  - Flowfile : A FlowFile represents each object moving through the system and for each one, NiFi keeps track of a map of key/value pair attribute strings and its associated content of zero or more bytes.
+  - Flowfile Processor : 	
+Processors actually perform the work. A processor is doing some combination of data routing, transformation, or mediation between systems. Processors have access to attributes of a given FlowFile and its content stream. Processors can operate on zero or more FlowFiles in a given unit of work and either commit that work or rollback.
+  - Connection : Connections provide the actual linkage between processors. These act as queues and allow various processes to interact at differing rates. These queues can be prioritized dynamically and can have upper bounds on load, which enable back pressure.
+  - Flow Controller : The Flow Controller maintains the knowledge of how processes connect and manages the threads and allocations thereof which all processes use. The Flow Controller acts as the broker facilitating the exchange of FlowFiles between processors.
+  - Process Group : 	
+A Process Group is a specific set of processes and their connections, which can receive data via input ports and send data out via output ports. In this manner, process groups allow creation of entirely new components simply by composition of other components.
+
+
+Keep the NiFi Docs : http://nifi.apache.org/docs.html specifically the User Guide handy.
+
+-----------------------------
+
 # Lab 2
 
-In this lab, we will learn how to:
-  - Consume the Meetup RSVP stream
+In this lab, we will learn how to consume data from an external system, extract content that we are interested in and then store the data in our system.
+
+Specifically,
+
+  - Consume a JSON Stream (The Meetup RSVP Stream)
   - Extract the JSON elements we are interested in
-  - Split the JSON into smaller fragments
+  - Split the JSON into smaller fragments for analysis
   - Write the JSON to the file system
-
-
-### Consuming RSVP Data
-
-To get started we need to consume the data from the Meetup RSVP stream, extract what we need, splt the content and save it to a file:
-
-#### Goals:
-   - Consume Meetup RSVP stream
-   - Extract the JSON elements we are interested in
-   - Split the JSON into smaller fragments
-   - Write the JSON files to disk
 
  Our final flow for this lab will look like the following:
 
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/lab1.png)
-  
-  A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/HDF-Workshop_Lab1-Flow.xml)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/lab1.png)
+
+   
+  The final template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/HDF-Workshop_Lab1-Flow.xml)
+
+  A good plan would be to refer to the template at the end after going through individual steps.
+
+### Steps
 
 1. With a blank canvas, click on the Configuration gear icon in the Operate box on the left side of the UI:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step1.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step1.png)
 
 2. Under the CONTROLLER SERVICES tab, Add a JettyWebSocketClient service and click on the gear icon to edit the configure the controller service.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step2.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step2.png)
 
 3. Under the PROPERTIES tab add the value for URI for the last property WebSocket URI, and paste it for the empty value for WebSocket URI in bold. The value pasted is ```ws://stream.meetup.com/2/rsvps```Lab2_step3. Your configuration should look like this:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step3.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step3.png)
 
 4. Notice that the state for the Controller Service is Disabled. Click on the lightning icon on the right to enable it:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step4.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step4.png)
 
 5. Add a ConnectWebSocket processor to the canvas by dragging the icon on the page:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step5.png)
   
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step5b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step5b.png)
 
 6. Configure the ConnectWebSocket Processor so it looks like below:
-  1. Under the properties tab set the WebSocket Client Controller Service
-  2. Set the WebSocket Client ID to AGP-HDF-WS-TEST
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step6.png)
-  3. Set the automatic termination
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step6b.png)
+  - Under the properties tab set the WebSocket Client Controller Service
+  - Set the WebSocket Client ID to AGP-HDF-WS-TEST
+  (Note this can be anything)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step6.png)
+  - Set the automatic termination as below
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step6b.png)
 
 7. Add an UpdateAttribute Processor to the canvas using the same method as previously:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step7.png)
+  - UpdateAttribute Processor
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step7.png)
   
   - Configure it to have a custom property called mime.type with the value of application/json:
-  
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step7b.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step7b.png)
 
 8. Join ConnectWebSocket Processor and the UpdateAttribute Processor using a text message for relationships.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step8.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step8b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step8.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step8b.png)
 
 9. Add an EvaluateJsonPath processor and configure it as shown below:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/jsonpath.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/jsonpath.png)
 
     The properties to add are:
     ```
-    event.name    	$.event.event_name
-    event.url     	$.event.event_url
-    group.city    	$.group.group_city
-    group.state   	$.group.group_state
-    group.country	$.group.group_country
-    group.name		$.group.group_name
-    venue.lat		$.venue.lat
-    venue.lon     	$.venue.lon
-    venue.name		$.venue.venue_name
+    event.name      $.event.event_name
+    event.url       $.event.event_url
+    group.city      $.group.group_city
+    group.state     $.group.group_state
+    group.country   $.group.group_country
+    group.name      $.group.group_name
+    venue.lat       $.venue.lat
+    venue.lon       $.venue.lon
+    venue.name      $.venue.venue_name
     ```
+    
+  Note the change in the value of Destination property to ```flowfile-attribute```
 
 10. Join the UpdateAttribute processor and EvaluateJsonPath processor.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step10.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step10.png)
 
 Also add a failure relationship (Note: recursive join)
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step10b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step10b.png)
 
 Auto-terminate unmatched relationships in the settings tab:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step10c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step10c.png)
 
 11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. Also the Original  relationship needs to be automatically terminated.  Your configuration should look like below:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step11.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step11b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step11.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step11b.png)
 
 12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJason Processor. Should look like the below.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step12.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step12b.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step12c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12c.png)
 
 13. Add a ReplaceText processor and configure the Search Value to be ```([{])([\S\s]+)([}])``` and the Replacement Value to be
     ```
@@ -456,52 +474,64 @@ Auto-terminate unmatched relationships in the settings tab:
       ```
   The processor should look like the below
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step13.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step13.png)
 
 14. Join the SplitJson processor and the ReplaceText processor. In addition add an on Failure recursive join.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step14.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step14b.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step14c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14c.png)
 
 15. Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```. Automatically terminate both on Success and Failure. The configuration should look like below.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step15.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step15b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step15.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step15b.png)
 
 16. Join the ReplaceText processor and the PutFile processor for successful relationships.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step16.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step16b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step16.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step16b.png)
 
-17. Start the flow by clicking on the ```Play``` triangle icon in the Operate window:
+17. Click on an empty part of the canvas. You have now selected the entire NiFi Flow.Start the flow by clicking on the ```Play``` triangle icon in the Operate window:
 
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step17.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step17.png)
 
-You should see tuples flowing after a couple of minutes.
+You should see data flowing after a couple of minutes.
+
+##### Mandatory: Questions to Answer
+1. Why did you assign a mime.type to UpdateAttribute Processor?
+2. What does terminate relationship in a Processor mean? How is this different from auto-terminate?
+3. What does a full RSVP Json object look like? Where would you find this?
+4. In Putfile processor, what happens when more than 1 file with the same name is received? How do you resolve this?
+5. How do you re-start a Processor?
+6. How do you stop all the processors currently running in the Flow?
+7. Login to your cluster and check if the files have been stored in the correct directory?
+8. Open a file and check its contents. How does it look compared to the full RSVP JSON Object in the Meetup Stream?
+
+
 
 ##### Optional: Questions to Answer
-1. What does a full RSVP Json object look like?
-2. How many output files do you end up with?
-3. How can you change the file name that Json is saved as from PutFile?
+1. How many output files do you end up with?
+2. How can you change the file name that Json is saved as from PutFile?
 3. Why do you think we are splitting out the RSVP's by group?
-4. Why are we using the Update Attribute processor to add a mime.type?
-4. How can you cange the flow to get the member photo from the Json and download it.
+4. How can you change the flow to get the member photo from the Json and download it.
 
-18. After completing this lab, create a new Process Group by dragging onto the canvas the Process Group icon and call it Lab2:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step18.png)
+### Post Lab 2
+1. After completing this lab, create a new Process Group by dragging onto the canvas the Process Group icon and call it Lab2:
 
-19. Select all the components of your flow including processors, and links between processors by pressing shift and selecting an area of the canvas which contains all the flow. You will see a rectangle being drawn in the canvas corresponding to the area selected. You may need to zoom out. 
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step18.png)
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step19.png)
+19. Select all the components of your flow including processors, and links between processors by pressing shift and selecting an area of the canvas which contains all the flow. You will see a rectangle being drawn in the canvas corresponding to the area selected. You may need to zoom out. Click on copy in the Operate area.
+
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step19.png)
 
 20. Double-click on the Lab2 process group. When a new canvass opens for the Lab2 process group, right-click and select ``` Paste ```. You should now have the entire flow pasted into this process group.
 
 21. Click on the main NiFi flow to go back on the main canvas. Select the flow as per step 19, right-click and select ``` Delete ```.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step21.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step21b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21b.png)
 
 You should now have an empty canvas to start on Lab 3.
 
@@ -509,20 +539,31 @@ You should now have an empty canvas to start on Lab 3.
 
 # Lab 3
 
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/lab3.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/lab3.png)
   A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/MiNiFi_Flow.xml)
 
-## Download and Install MiniFi
+## Download and Install MiNiFi
+
+Check if MiNiFi has been installed under /usr/hdf/current or /usr/hdf in your cluster.
+
+If it has been installed then ignore the below and jump to "Getting Started With MiNiFi"
 
 Run all the below commands as root:
 ```
-wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-0.5.0-bin.tar.gz
-wget http://apache.claz.org/nifi/minifi/0.5.0/minifi-toolkit-0.5.0-bin.tar.gz
-cp minifi-0.5.0-bin.tar.gz /usr/hdf
-cp minifi-toolkit-0.5.0-bin.tar.gz /usr/hdf
-cd /usr/hdf
-tar zxvf minifi-0.5.0-bin.tar.gz
-tar xzvf minifi-toolkit-0.5.0-bin.tar.gz
+mkdir -p /tmp/minifi
+
+wget -P /tmp/minifi http://public-repo-1.hortonworks.com/HDF/3.4.0.0/minifi-0.6.0.3.4.0.0-155-bin.tar.gz
+
+wget -P /tmp/minifi http://public-repo-1.hortonworks.com/HDF/3.4.0.0/minifi-toolkit-0.6.0.3.4.0.0-155-bin.tar.gz
+
+cd /usr/hdf/3.4.0.0-155
+
+tar zxvf /tmp/minifi-0.*-bin.tar.gz
+tar zxvf /tmp/minifi-toolkit-0.*-bin.tar.gz
+
+cd /usr/hdf/current
+ln -s /usr/hdf/3.4.0.0-155/minifi-0.* minifi
+ln -s /usr/hdf/3.4.0.0-155/minifi-toolkit-0.* minifi-toolkit
 ```
 
 ## Getting started with MiNiFi ##
@@ -531,10 +572,9 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 * Setting up the Flow for NiFi
 * Setting up the Flow for MiNiFi
-* Preparing the flow for MiNiFi
+* Preparing the Flow for MiNiFi
 * Configuring and starting MiNiFi
 * Enjoying the data flow!
-
 
 ## Setting up the Flow for NiFi
 
@@ -552,7 +592,7 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
   ```
   Save the configuration changes. Click on ```PROCEED ANYWAY``` if receiving warnings.
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step1.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step1.png)
 
 2. Restart NiFi via Ambari
 
@@ -560,73 +600,78 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi":
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step4.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step4.png)
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step4b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step4b.png)
 
-5. Now that the Input Port is configured we need to have somewhere for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
+5. Now that the Input Port is configured we need to have a place for the data to go once we receive it. In this case we will keep it very simple and just log the attributes. To do this drag the Processor icon to the canvas and choose the LogAttribute processor.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step5.png)
 
 6. On the Settings tab, under Auto-terminate relationships, select the checkbox next to Success. This will terminate FlowFiles after this processor has successfully processed them.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step5b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step5b.png)
 
 7. Also on the Settings tab, set the Bulletin level to Info. This way, when the dataflow is running, this processor will display the bulletin icon, and the user may hover over it with the mouse to see the attributes that the processor is logging.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step7.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step7.png)
 
 8. Now that we have the input port and the processor to handle our data, we need to connect them. After creating the connection your data flow should look like this:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step8.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step8.png)
 
 9. We are now ready to build the MiNiFi side of the flow. To do this do the following:
+
   - Add a GenerateFlowFile processor to the canvas. On the Scheduling tab, set Run schedule to: 5 sec. Note that the GenerateFlowFile processor can create many FlowFiles very quickly; that's why setting the Run schedule is important so that this flow does not overwhelm the system NiFi is running on.
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step9.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9.png)
   
   - On the Properties tab, set File Size to: 10 kb	
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step9b.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9b.png)
   
   - Add a Remote Processor Group to the canvas. Drag and drop a remote processor group to the canvas:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step9b2.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9b2.png)
     
   For the URL copy and paste the URL for the NiFi UI from your browser:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step9c.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9c.png)
+
+  - Note that the URL above is specific to that instance and your URL may be different.
   
   - Connect the GenerateFlowFile to the Remote Process Group. Your canvas should look like the following:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step9d.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9d.png)
     
 
-10. The next step is to generate the flow we need for MiNiFi. To do this do the following steps:
+10. The next step is to generate the flow we need for MiNiFi. To do this we will do the following :
 
-   * Create a template for MiNiFi
-   * Select the GenerateFlowFile, the NiFi Flow Remote Processor Group, and the Connection between them (these are the only things needed for MiNiFi).
-   * Select the "Create Template" button from the toolbar
-   * Name your template: MiNiFi Flow
+  - Create a template for MiNiFi
+    * Select the GenerateFlowFile, the NiFi Flow Remote Processor Group, and the Connection between them (these are the only things needed for MiNiFi).
+    * Select the "Create Template" button from the toolbar
+    * Name your template: MiNiFi Flow
    
-   ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step10.png)
+   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step10.png)
   
-11. Now we need to download the template. Select ```Templates```
+11. Download the created template. Select ```Templates```
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step11.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step11.png)
 
-12. Now SCP the template you downloaded to the ````/tmp```` directory on your VM. If you are using Windows on your workstation, you will need to download WinSCP (https://winscp.net/eng/download.php)
+12. Copy the template you downloaded to the ````/tmp```` directory on your cluster. If you are using Windows on your workstation, you will need to download WinSCP (https://winscp.net/eng/download.php)
 
-Example: ```scp MiniFi_Flow.xml bamako.field.hortonworks.com:/tmp```
+On OSX and Linux :```scp -i <key.pem> MiNiFi_Flow.xml centos@<IPADDRESS>:/tmp/.```
 
 13.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
 
 - Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
     ```cd /usr/hdf/minifi-toolkit-0.5.0```
 - Transform the template that we downloaded using the following command: ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
-  Example: ````bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
+  Example: ````sudo bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
 
-14. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. That is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
+  Remember to run the command as root.
+
+14. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. This is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
 ```
 cd /usr/hdf/minifi-0.5.0/conf
 cp /usr/hdf/minifi-toolkit-0.5.0/config.yml .
@@ -635,12 +680,12 @@ cp /usr/hdf/minifi-toolkit-0.5.0/config.yml .
 
   ```
   cd /usr/hdf/minifi-0.5.0
-  bin/minifi.sh start
-  tail -f logs/minifi-app.log
+  sudo bin/minifi.sh start
+  sudo tail -f logs/minifi-app.log
   ```
 16. Start your flows on NiFi by clicking on the ```Play``` triangle icon in the Operate window.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step12.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step12.png)
 
 You should be able to now go to your NiFi flow and see data coming in from MiNiFi.
 
@@ -654,8 +699,14 @@ Start the port and you will see messages being accumulated in its downstream que
 
 17. You should see messages coming in through LogAttribute. Your canvas should look like the following:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab3_step13.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step13.png)
 
+18. Shut down the flow.
+
+##### Mandatory: Questions to Answer
+1. Look at the config.yml, whats the main property here that needs to be changed if you want to re-use the config?
+2. What happens when "From MiNiFI" processor is stopped? Why?
+3. How do you stop the MiNiFi?
 ------------------
 
 # Lab 4
@@ -750,15 +801,15 @@ As you type messages in the producer window they should appear in the consumer w
      - Broker is ```<host-name-fqdn>:6667```
      - Use Transactions is set to ```false```
      
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab5_2_step3.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3.png)
   
   - Step 4: In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships```.
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab5_2_step3b.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3b.png)
   
   - Step 5: Create a failure recursive join on the processor itself. Your flow should look like the following:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab5_2_step3c.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3c.png)
 
 
 3. Start the NiFi flow
@@ -801,7 +852,7 @@ As you type messages in the producer window they should appear in the consumer w
 2. Adding the Schema to the Schema Registry
   - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this from the either ```https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc``` drop down in Ambari, as shown below:
 
-    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_2_step1.png)
+    ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_2_step1.png)
 
     or by going to ````http://<host-FQDN>:7788````
     
@@ -815,7 +866,7 @@ As you type messages in the producer window they should appear in the consumer w
 
         Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
 	
-	![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_2_step2.png)
+	![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_2_step2.png)
 	
    3. We are now ready to integrate the schema with NiFi
       - Step 1: Remove the PutFile and PublishKafka_1_0 processors from the canvas, we will not need them for this section. Before 	removing the processors, you will need to remove the links between ReplaceText and these processors. Select the links/processors on the canvas, and press delete.
@@ -852,7 +903,7 @@ As you type messages in the producer window they should appear in the consumer w
 	- Set Record Reader to: ```JsonTreeReader```. Note that you will have to first Select ```Create new Service...``` from the drop down.
 	- Set Record Writer to: ```AvroRecordSetWriter```. Note that you will have to first Select ```Create new Service...``` from the drop down.
 	
-    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step12.png)
+    ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step12.png)
        
        - In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships``` like you did in the previous lab.
        - Create a failure recursive join on the processor itself like you did in the previous lab.
@@ -861,15 +912,15 @@ As you type messages in the producer window they should appear in the consumer w
   
      - Click on the Configuration gear icon in the Operate box on the left side of the UI:
 
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab2_step1.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step1.png)
 
      - Click on the '+' sign on the right hand side of the Controller Services window and select ```HortonworksSchemaRegistry```.
      
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step13_1.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step13_1.png)
      
      - Click on the settings (gear icon) for HortonworksSchemaRegistry:
      
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step13_2.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step13_2.png)
       
      - It should be configured as shown below. Customize the URL with the actual FQDN of your VM:
 
@@ -877,17 +928,17 @@ As you type messages in the producer window they should appear in the consumer w
      
      - Enable the HortonworksSchemaRegistry service controller by clicking on the lightning icon, next to the setting/gear icon:
      
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step13_3.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step13_3.png)
      
    - Step 14: Configure the JsonTreeReader. 
    
      - Click on the setting/gear icon next to JsonTreeReader controller service:
      
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step14.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step14.png)
      
      - Configure JsonTreeReader as shown below:
 
-     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step14_2.png)
+     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step14_2.png)
     
      - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
@@ -896,7 +947,7 @@ As you type messages in the producer window they should appear in the consumer w
      - Click on the setting/gear icon next to AvroRecordSetWriter controller service:	
      - Configure AvroRecordSetWriter as shown below:
 
-      ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_step15.png)
+      ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step15.png)
       
      - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
@@ -926,22 +977,22 @@ For this lab we are going to set up NiFi registry and use variables. NiFi regist
 1. Open Nifi Registry from Ambari UI - 
 Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_01.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_01.png)
 
 2. Create a Bucket to do version control on NiFi Registry UI. 
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_02.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_02.png)
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_021.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_021.png)
  
 
 3. Right click on processor group ```Lab2``` to select Version Control.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_3.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_3.png)
 
 4. The bucket created in NiFi Registry should automatically appear if it’s in the same cluster
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_4.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_4.png)
 
 
 ## Variable Registry:
@@ -949,16 +1000,16 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 
 Step 1: On the processor group Lab2 select "variables op"
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_01.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_01.png)
 
 Step 2: Using + symbol add new variable and add corresponding value to the variable. In this example we are adding a variable for Kafka topic.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_02.png)
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_03.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_02.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_03.png)
 
 Step 3: Apply the variable and close. 
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_04.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_04.png)
 
 Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
 
@@ -967,21 +1018,21 @@ Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
 
 Step 5: Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_5.png)
 
 
 Step 6: You can see the changes that were made by selecting “Show Local Changes”
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_VR_051.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_051.png)
 
 
 Step 7: Decide to Commit or Revert any changes that are made. If you decide to save the changes, comment before you commit about the changes. Note that you can configure to commit these changes to Github as well.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_7.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_7.png)
 
 Step 8: The pushed changes will appear in Nifi Registry Lab6
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab6_NR_8.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_8.png)
 
 ------------------
 
@@ -995,15 +1046,15 @@ For this lab we are going to consume data from the previous NiFi application and
 
 1. Open the SAM UI from Ambari. From Ambari, click on Streaming Analytics Manager Service, then click on ```SAM UI``` from Quick Links on the right hand side of the Ambari console:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step1.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step1.png)
 
 The following screen will appear:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step1b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step1b.png)
 
 2. Define the Service Pool. As described in the welcome screen, we first need to define a Service Pool. Click on the tool icon on the left-hand side tool bar and select Service Pool in the menu:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step2.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step2.png)
 
 3. Update the Ambari URL corresponding to your cluster by replacing the placeholders in the URL with the following values:
   - Ambari_host: Public IP of your VM.
@@ -1011,39 +1062,39 @@ The following screen will appear:
   - CLUSTER_NAME: Your cluster name
   Then, click on the AUTO-ADD button
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step3.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step3.png)
   
   You will be prompted for your Ambari credentials. Enter admin/admin.
   
   Once the cluster has been added successfully, you will see it appear as a service pool:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step3b.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step3b.png)
   
 4. Define a Development Environment. Click on the tool icon on the left-hand side toolbar and select Environments:  
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step4.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step4.png)
   
   - In the new screen, please click Add (Green hexagon with the ‘+’ sign on the top right):  
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step4b.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step4b.png)
   
   - Create a new Environment called Development, and select all services (They should be highlighted in blue):
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step4c.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step4c.png)
   
   - Then, click OK. The new environment will appear as a new tile:
   
-  ![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step4d.png)
+  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step4d.png)
   
   At this point, we are ready to develop a new SAM (Streaming Analytics Manager) Application.
   
 5. Click on the application icon on the left hand side toolbar, and select ‘My Application’. Click on Add (Green hexagon on the top righ with the ‘+’ sign), and select ```New Application```:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step5.png)
 
 - Enter the following Application NAME: ‘MeetupSamApp’. It’s important that there are no spaces in your application name, as this could potentially cause some issues with Storm. For the environment, please select ‘Development’ that we just created previously.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab7_step5b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab7_step5b.png)
 
 You will now have an empty canvas. We are ready to develop the SAM Application.
 
@@ -1053,7 +1104,7 @@ You will now have an empty canvas. We are ready to develop the SAM Application.
 
 - From the various operators available on the processor menu, please select Kafka from SOURCE, then drag and drop it onto the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step1.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step1.png)
 
 - Double-click on the Kafka operator on the canvas, and enter the following values:
 
@@ -1065,7 +1116,7 @@ You will now have an empty canvas. We are ready to develop the SAM Application.
 	- READER SCHEMA VERSION: 1
 	- CONSUMER GROUP ID: kafka_gid_0
 	
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step1b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step1b.png)
 
 You will notice that the schema will appear on the output. The schema is retrieved from the schema registry.
 
@@ -1073,11 +1124,11 @@ You will notice that the schema will appear on the output. The schema is retriev
 
 - Select the Druid processor from SINK, then drag and drop it on the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step2.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step2.png)
 
 - At this point, link the ‘KAFKA’ and ‘DRUID’ operators by clicking on the green circle on the right hand side of the ‘KAFKA’ operator and bringing the arrow to the grey circle on the ‘DRUID’ operator:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step2b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step2b.png)
 
 - Double-click on the ```DRUID``` operator and enter the following values:
 
@@ -1089,17 +1140,17 @@ You will notice that the schema will appear on the output. The schema is retriev
 	- SEGMENT GRANULARITY: FIVE_MINUTE
 	- QUERY GRANULARITY: MINUTE
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step2c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step2c.png)
 
 3. As this is a JSON record with nested structures, we need to project all fields in order to do a SQL operation like an aggregate.
 
 - Select the ```PROJECTION``` processor and drag and drop it to the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step3.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step3.png)
 
 - Link the ‘KAFKA’ and ‘PROJECTION’ operators by clicking on the green circle on the right hand side of the ‘KAFKA’ operator and bringing the arrow to the grey circle on the ‘PROJECTION’ operator like you did in the previous step:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step3b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step3b.png)
 
 - Double-click on the PROJECTION operator:
 
@@ -1114,17 +1165,17 @@ You will notice that the schema will appear on the output. The schema is retriev
 		- meetupgroup.urlkey: group_urlkey
 		- meetupgroup.topic_name: group_topic_name
 		```
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step3d.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step3d.png)
 
 4. For our real-time analytics component, we want to aggregate in real-time the number of RSVPs per Country, and City across all Meetup Groups to have a real-time indication on the vitality of Meetups community in various geographies.
 
 - Select the AGGREGATE operator and drag and drop it to the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step4.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step4.png)
 
 - Link the PROJECTION and AGGREGATE  operators by clicking on the green circle on the right hand side of the PROJECTION operator and bringing the arrow to the grey circle on the AGGREGATE operator:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step4b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step4b.png)
 
 - Double-click on the AGGREGATE operator:
 
@@ -1136,7 +1187,7 @@ You will notice that the schema will appear on the output. The schema is retriev
 	- AGGREGATE EXPRESSION: COUNT(event_url)
 	- FIELDS NAME: rsvp_count
 	
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step4b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step4b.png)
 		
 Click OK.
 
@@ -1144,11 +1195,11 @@ Click OK.
 
 - Select the HDFS Operator from the **SINK Operators** and drag and drop it to the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step5.png)
 
 - Link the AGGREGATE and HDFS  operators by clicking on the green circle on the right hand side of the AGGREGATE operator and bringing the arrow to the grey circle on the HDFS operator:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step5b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step5b.png)
 
 - Double-click on the HDFS Operator:
 
@@ -1161,17 +1212,17 @@ Click OK.
 	- ROTATION INTERVAL UNIT: MINUTES
 	- OUTPUT FIELDS: Select All
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step5c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step5c.png)
 
 6. We also want to persist on HDFS all the data received from Kafka.
 
 - Select the HDFS Operator from the **SINK Operators** and drag and drop it to the canvas:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step5.png)
 
 - Link the PROJECTION and HDFS  operators by clicking on the green circle on the right hand side of the PROJECTION operator and bringing the arrow to the grey circle on the HDFS operator:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step6.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step6.png)
 
 - Double-click on the HDFS Operator:
 
@@ -1184,44 +1235,44 @@ Click OK.
 	- ROTATION INTERVAL UNIT: MINUTES
 	- OUTPUT FIELDS: Select All
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step6b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step6b.png)
 
 7. Your application is now ready. We are now ready to deploy. The SAM Application flow should look like:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7.png)
 
 - Click on Configure on the top right hand side of the screen:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7b.png)
 
 - Fill the values as below:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7c.png)
 
 - Run the SAM Application. On the bottom right of the canvas, click on Run icon:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7d.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7d.png)
 
 - Click OK on the window asking you to confirm the configuration. Give a few minutes for the application to deploy. You should get a notification that the application has been deployed successfully. The icon will now change to the following state. Do NOT click on Kill:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7e.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7e.png)
 
 - On the top left of your web browser window, click on ‘My Applications’ to get back to the main Application screen. You will be asked if you want to navigate away from the page. Just click OK:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step7f.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step7f.png)
 
 
 8. On the main window, click on the 3 dots on the top right of the tile corresponding to your application, and click on 'Refresh' from time to time after waiting for a couple of minutes. You should see some tuples emitted and transferred in your application.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step8.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step8.png)
 
 9. Go back to Ambari and Click on File View on the drop down from the Views Menu icon
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step9.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step9.png)
 
 10. Navigate to /tmp/meetups-rsvp and /tmp/rsvp-agg and preview the files. Note that you will need to wait at least 5 minutes of processing before seeing any file in /tmp/rsvp-agg, as these files are generated every 5 minutes.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab72_step9b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab72_step9b.png)
 
 Let this application run at least for 30-45 minutes to populate the Druid cube data source used for Lab 8.
 
@@ -1235,59 +1286,52 @@ In this section, we will explore data visualization with Superset for the Meetup
 
 1. Go to Ambari, and click on Druid. Make sure all Druid components are up.  Click on the Druid Coordinator console hyperlink from the Quick Links section:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step1.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step1.png)
 
 2. On the Druid console, you should see the meetup-dsn appear. If not, make sure it shows that indexing tasks are running, and that you have let the SAM application run for around 30 minutes.
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step2.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step2.png)
 
 3. Once you see the data source name, go back to Ambari and click on the Superset service. Click on Superset hyperlink from the Quick Links section:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step3.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step3.png)
 
 On the Superset window, login as admin/StrongPassword
 
 4. On Superset top menu, click on Sources and select 'Scan New Datasources' from the drop down:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step4.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step4.png)
 
 You should see the meetup-dsn source appearing on the list of Druid data sources:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step4b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step4b.png)
 
 5. Click on the actual data source name meetup-dsn. This should bring you to a new window to build a visualization. Click on the Visualization Type:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5.png)
 
 - Choose Sunburst:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5b.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5b.png)
 
 - In the new window, for Time Granularity choose '5 minutes' and for Hierarchy, choose these fields in the same order: group_country, group_city, group_name:
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5c.png)
 
 - Click on Run Query at the top right. You will see a sunburst diagram appear. Click on its title to rename it and call it "Meetup RSVP per Geo".
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5d.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5d.png)
 
 - Click on 'Save' right next to 'Run Query' and save the visualization as follows, then click 'Save and Go to Dashboard':
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5e.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5e.png)
 
 - You will now go to the dashboard. Click on Actions on the right hand-side, and set Auto-refresh to every 5 minutes. From the same menu, click on 'Save the dashboard':
 
-![Image](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/img/Lab8_step5f.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab8_step5f.png)
 
 You should see this dashboard refresh every 5 minutes.\
 
 At this point, you can explore adding more visualizations, such as a timeline or a sankey. 
 
 ------------------
-
-
-
-
-
-
-
