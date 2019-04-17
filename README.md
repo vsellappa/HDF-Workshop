@@ -549,7 +549,7 @@ Check if MiNiFi has been installed under /usr/hdf/current or /usr/hdf in your cl
 
 If it has been installed then ignore the below and jump to "Getting Started With MiNiFi"
 
-Run all the below commands as root:
+If MiNiFi has not been installed then, run the below commands from a terminal as root:
 ```
 mkdir -p /tmp/minifi
 
@@ -664,28 +664,38 @@ NOTE: The Input port must be configured on the Main Flow canvas and not inside a
 
 12. Copy the template you downloaded to the ````/tmp```` directory on your cluster. If you are using Windows on your workstation, you will need to download [WinSCP](https://winscp.net/eng/download.php)
 
-On OSX and Linux :```scp -i <key.pem> MiNiFi_Flow.xml centos@<IPADDRESS>:/tmp/.```
+On OSX and Linux:
+```
+scp -i <key.pem> MiNiFi_Flow.xml centos@<IPADDRESS>:/tmp/.
+```
 
 13.  We are now ready to setup MiNiFi. However before doing that we need to convert the template to YAML format which MiNiFi uses. To do this we need to do the following:
 
-- Navigate to the minifi-toolkit directory (/usr/hdf/minifi-toolkit-0.5.0)
-    ```cd /usr/hdf/minifi-toolkit-0.5.0```
-- Transform the template that we downloaded using the following command: ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
-  Example: ````sudo bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml````
+- Navigate to the minifi-toolkit directory
 
-  Remember to run the command as root.
-
-14. Next copy the ````config.yml```` to the ````/usr/hdf/minifi-0.5.0/conf```` directory. This is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
 ```
-cd /usr/hdf/minifi-0.5.0/conf
-cp /usr/hdf/minifi-toolkit-0.5.0/config.yml .
+cd /usr/hdf/current/minifi-toolkit
+```
+
+- Transform the template that we downloaded using the following command: ````bin/config.sh transform <INPUT_TEMPLATE> <OUTPUT_FILE>````
+
+  Example:
+  ```
+  sudo bin/config.sh transform /tmp/MiniFi_Flow.xml config.yml
+  ```
+
+14. Next copy the ````config.yml```` to the ````/usr/hdf/current/minifi/conf```` directory. This is the file that MiNiFi uses to generate the nifi.properties file and the flow.xml.gz for MiNiFi.
+
+```
+cd /usr/hdf/current/minifi/conf
+sudo cp /usr/hdf/current/minifi-toolkit/config.yml .
 ```
 15. That is it, we are now ready to start MiNiFi. To start MiNiFi from a command prompt execute the following:
 
   ```
-  cd /usr/hdf/minifi-0.5.0
+  cd /usr/hdf/current/minifi
   sudo bin/minifi.sh start
-  sudo tail -f logs/minifi-app.log
+  sudo tail -100f logs/minifi-app.log
   ```
 16. Start your flows on NiFi by clicking on the ```Play``` triangle icon in the Operate window.
 
@@ -695,7 +705,7 @@ You should be able to now go to your NiFi flow and see data coming in from MiNiF
 
 You may tail the log of the MiNiFi application by
    ```
-   tail -f /usr/hdf/minifi-0.5.0/logs/minifi-app.log
+   tail -100f /usr/hdf/current/minifi/logs/minifi-app.log
    ```
 If you see error logs such as "the remote instance indicates that the port is not in a valid state",
 it is because the Input Port has not been started.
@@ -705,12 +715,17 @@ Start the port and you will see messages being accumulated in its downstream que
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step13.png)
 
-18. Shut down the flow.
+18. Shut down the NiFi flow in the canvas and stop minifi via the command line.
+
+```
+cd /usr/hdf/current/minifi
+sudo bin/minifi.sh stop
+```
 
 ##### Mandatory: Questions to Answer
 1. Look at the config.yml, whats the main property here that needs to be changed if you want to re-use the config?
 2. What happens when "From MiNiFI" processor is stopped? Why?
-3. How do you stop the MiNiFi service?
+3. What are the other command line parameters of minifi?
 
 ------------------
 
@@ -723,10 +738,10 @@ In this lab we are going to explore creating, writing to and consuming Kafka top
 - Step 1: Open an SSH connection to your cluster. NOTE:You might have to run some of the commands as root.
 
 - Step 2: Navigate to the Kafka directory 
-````/usr/hdp/current/kafka-broker````, this is where Kafka is installed, we will use the utilities located in the bin directory.
+````/usr/hdf/current/kafka-broker````, this is where Kafka is installed, we will use the utilities located in the bin directory.
 
   ````
-  #cd /usr/hdp/current/kafka-broker
+  cd /usr/hdf/current/kafka-broker
   ````
 
 - Step 3: Create a topic using the ````kafka-topics.sh```` script
@@ -804,31 +819,29 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 
 2. Integrating NiFi
   - Step 0: Re-use the Process Group from Lab2.
-  - Step 1: Add a PublishKafka_2_0 processor to the canvas. Note that there are processors for other versions of Kafka as well. Choose the correct one.
-  - Step 2: Add a routing for the success relationship of the ReplaceText processor to the PublishKafka_1_0 processor added in Step 1 as shown below:
 
-    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/publishkafka.png)
+  - Step 1: Add a PublishKafka_2_0 processor to the canvas. Note that there are processors for other versions of Kafka as well. Choose the correct one.
+
+  - Step 2: Add a routing for the success relationship of the ReplaceText processor to the PublishKafka_2_0 processor added in Step 1 as shown below:
   
-  - Step 3: Configure the topic and broker for the PublishKafka_1_0 processor,
+  - Step 3: Configure the topic and broker for the PublishKafka_2_0 processor,
   where:
      - Topic is ```meetup_rsvp_raw```
      - Broker is ```<host-name-fqdn>:6667```
      - Use Transactions is set to ```false```
      
-  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3.png)
+  ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/Lab5_2_step3.png)
   
   - Step 4: In the Settings tab of the processor, select ```success``` for the ```Automatically Terminate Relationships```.
   
-  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3b.png)
-  
   - Step 5: Create a failure recursive join on the processor itself. Your flow should look like the following:
   
-  ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab5_2_step3c.png)
+  ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/Lab5_2_step3c.png)
 
 
 3. Start the NiFi flow
 
-4. In a terminal window to your VM node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_raw```` topic:
+4. Login to your cluster node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_raw```` topic:
 
     ````
     bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic meetup_rsvp_raw
@@ -851,21 +864,23 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 
 1. Creating the topic
   - Step 1: Open a SSH connection to your cluster.
-  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+
+  - Step 2: Navigate to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
     cd /usr/hdp/current/kafka-broker/
     ````
 
   - Step 3: Create a topic using the ````kafka-topics.sh```` script
+
     ````
     bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic meetup_rsvp_avro
-
     ````
 
     NOTE: Based on how Kafka reports metrics topics with a period ('.') or underscore ('_') may collide with metric names and should be avoided. If they cannot be avoided, then you should only use one of them.
 
   - Step 4:	Ensure the topic was created
+
     ````
     bin/kafka-topics.sh --list --zookeeper localhost:2181
     ````
@@ -878,7 +893,9 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
     or by going to ````http://<host-FQDN>:7788````
     
   - Step 2: Create Meetup RSVP Schema in the Schema Registry
+
     1. Click on “+” button to add new schemas. A window called “Add New Schema” will appear.
+
     2. Fill in the fields of the ````Add Schema Dialog```` as follows:
 
         ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/add_schema_dialog.png)
@@ -891,17 +908,22 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 	
    3. We are now ready to integrate the schema with NiFi
       - Step 1: Remove the PutFile and PublishKafka_2_0 processors from the canvas, we will not need them for this section. Before removing the processors, (ensure the NiFi flow is stopped), you will need to remove the links between ReplaceText and these processors. Select the links/processors on the canvas, and press delete.
+
       - Step 2: Add a UpdateAttribute processor to the canvas.
+
       - Step 3: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
+
       - Step 4: Configure the UpdateAttribute processor as shown below:
 
-   ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/update_attribute_schema_name.png)
+   ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/update_attribute_schema_name.png)
 
   - Step 5: Add a JoltTransformJSON processor to the canvas.
+
   - Step 6: Add a routing for the success relationship of the UpdateAttribute processor to the JoltTransformJSON processor added in Step 5.
+
   - Step 7: Configure the JoltTransformJSON processor as shown below:
 
-    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/jolt_transform_config.png)
+    ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/jolt_transform_config.png)
 
     The JSON used in the 'Jolt Specification' property is as follows:
 
@@ -914,10 +936,15 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
     }
   ``
   - Step 8: Add a LogAttribute processor to the canvas. In the settings tab of the processor, select ```success``` in the ```Automatically Terminate Relationships```.
+
   - Step 9: Add a routing for the failure relationship of the JoltTransformJSON processor to the LogAttribute processor added in Step 8.
+
   - Step 10: Add a PublishKafkaRecord_2_0 to the canvas.
+
   - Step 11: Add a routing for the success relationship of the JoltTransformJSON processor to the PublishKafkaRecord_2_0 processor added in Step 10.
+
   - Step 12: Configure the PublishKafkaRecord_2_0 processor to look like the following:
+
 	- Set Kafka Brokers to: ```<host-FQDN>:6667```
 	- Set Topic Name to: ```meetup_rsvp_avro```
 	- Set Use Transactions to: ```false```
@@ -959,7 +986,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
      
      - Configure JsonTreeReader as shown below:
 
-     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step14_2.png)
+     ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/Lab6_step14_2.png)
     
      - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
@@ -968,7 +995,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
      - Click on the setting/gear icon next to AvroRecordSetWriter controller service:	
      - Configure AvroRecordSetWriter as shown below:
 
-      ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step15.png)
+      ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/Lab6_step15.png)
       
      - Enable the AvroRecordSetWriter service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
@@ -982,7 +1009,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 5. In a terminal window to your cluster, navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_avro```` topic, remembering to change the FQDN of your bootstrap-server:
 
     ````
-    cd /usr/hdp/current/kafka-broker
+    cd /usr/hdf/current/kafka-broker
 
     bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic meetup_rsvp_avro
     ````
