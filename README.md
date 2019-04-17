@@ -523,13 +523,13 @@ You should see data flowing after a couple of minutes.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step18.png)
 
-19. Select all the components of your flow including processors, and links between processors by pressing shift and selecting an area of the canvas which contains all the flow. You will see a rectangle being drawn in the canvas corresponding to the area selected. You may need to zoom out. Click on copy in the Operate area.
+2. Select all the components of your flow including processors, and links between processors by pressing shift and selecting an area of the canvas which contains all the flow. You will see a rectangle being drawn in the canvas corresponding to the area selected. You may need to zoom out. Click on copy in the Operate area.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step19.png)
 
-20. Double-click on the Lab2 process group. When a new canvass opens for the Lab2 process group, right-click and select ``` Paste ```. You should now have the entire flow pasted into this process group.
+3. Double-click on the Lab2 process group. When a new canvass opens for the Lab2 process group, right-click and select ``` Paste ```. You should now have the entire flow pasted into this process group.
 
-21. Click on the main NiFi flow to go back on the main canvas. Select the flow as per step 19, right-click and select ``` Delete ```.
+4. Click on the main NiFi flow to go back on the main canvas. Select the flow as per step 19, right-click and select ``` Delete ```.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21.png)
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step21b.png)
@@ -583,13 +583,12 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 * Change:
   ````
-			nifi.remote.input.socket.port=
-
+    nifi.remote.input.socket.port=
   ````
   To
-  ```
-   		nifi.remote.input.socket.port=10000
 
+  ```
+    nifi.remote.input.socket.port=10000
   ```
   Save the configuration changes. Click on ```PROCEED ANYWAY``` if receiving warnings.
   
@@ -708,6 +707,7 @@ Start the port and you will see messages being accumulated in its downstream que
 1. Look at the config.yml, whats the main property here that needs to be changed if you want to re-use the config?
 2. What happens when "From MiNiFI" processor is stopped? Why?
 3. How do you stop the MiNiFi service?
+
 ------------------
 
 # Lab 4
@@ -715,54 +715,62 @@ Start the port and you will see messages being accumulated in its downstream que
 ## Kafka Basics
 In this lab we are going to explore creating, writing to and consuming Kafka topics. This will come in handy when we later integrate Kafka with NiFi and Streaming Analytics Manager.
 
-1. Creating a topic
-  - Step 1: Open an SSH connection to your VM as root.
-  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+1. Creating a Topic
+- Step 1: Open an SSH connection to your cluster. NOTE:You might have to run some of the commands as root.
 
-    ````
-    #cd /usr/hdp/current/kafka-broker
-    ````
+- Step 2: Navigate to the Kafka directory 
+````/usr/hdp/current/kafka-broker````, this is where Kafka is installed, we will use the utilities located in the bin directory.
 
-  - Step 3: Create a topic using the kafka-topics.sh script
-    ````
-    bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic first-topic
+  ````
+  #cd /usr/hdp/current/kafka-broker
+  ````
 
-    ````
+- Step 3: Create a topic using the ````kafka-topics.sh```` script
 
-    NOTE: Based on how Kafka reports metrics topics with a period ('.') or underscore ('_') may collide with metric names and should be avoided. If they cannot be avoided, then you should only use one of them.
+  ````
+  bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic first-topic
+  ````
+  NOTE: Based on how Kafka reports metrics topics with a period ('.') or underscore ('_') may collide with metric names and should be avoided. If they cannot be avoided, then you should only use one of them.
 
-  - Step 4:	Ensure the topic was created
-    ````
-    bin/kafka-topics.sh --list --zookeeper localhost:2181
-    ````
+- Step 4:	Ensure the topic was created
+
+  ````
+  bin/kafka-topics.sh --list --zookeeper localhost:2181
+  ````
 
 2. Testing Producers and Consumers
-  - Step 1: Open a second terminal on your VM and navigate to the Kafka directory
-  - Step 2: In one shell window connect a consumer:
+- Step 1: Open a second terminal to your cluster and navigate to the Kafka directory
+
+- Step 2: In one shell window connect a consumer, customize the FQDN with the hostname of your cluster:
+
   ````
   cd /usr/hdp/current/kafka-broker
-  bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic first-topic
+  bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic first-topic
   ````
 
-  Note: using –from-beginning will tell the broker we want to consume from the first message in the topic. Otherwise it will be from the   latest offset.
+  Note 1: using –from-beginning will tell the broker we want to consume from the first message in the topic. Otherwise it will be from the latest offset.
 
- - Step 3: In the second shell window connect a producer. Customize the FQDN in the broker-list with the hostname of your VM:
- ````
- bin/kafka-console-producer.sh --broker-list bamako.field.hortonworks.com:6667 --topic first-topic
- ````
+- Step 3: In the second shell window connect a producer. Customize the FQDN in the broker-list with the hostname of your cluster:
 
-- Step 4: Sending messages. Now that the producer is  connected  we can type messages:
-          - Type a random message in the producer window
-	  - Messages should appear in the consumer window.
+  ````
+  bin/kafka-console-producer.sh --broker-list bamako.field.hortonworks.com:6667 --topic first-topic
+  ````
+- Step 4: Sending messages. Now that the producer is connected we can type messages:
+  - Type a random message in the producer window
+  - Messages should appear in the consumer window.
 
 - Step 5: Close the consumer (ctrl-c) and reconnect using the default offset, of latest. You will now see only new messages typed in the producer window.
+
 ````
-bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic first-topic
+bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --topic first-topic
 ````
-As you type messages in the producer window they should appear in the consumer window.
+  As you type messages in the producer window they should appear in the consumer window.
 
 - Step 6: Close both consumers and producers by using Ctrl+C on each session.
 
+##### Optional: Questions to Answer
+1. Check the options for Kafka Producer and Consumer. 
+2. List the topics given , what is __consumer_offsets.
 
 ------------------
 
@@ -770,14 +778,14 @@ As you type messages in the producer window they should appear in the consumer w
 
 ## Integrating Kafka with NiFi
 1. Creating the topic
-  - Step 1: Open an SSH connection on your VM.
+  - Step 1: Open a SSH connection to your cluster.
   - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    #cd /usr/hdp/current/kafka-broker/
+    cd /usr/hdp/current/kafka-broker/
     ````
 
-  - Step 3: Create a topic using the kafka-topics.sh script
+  - Step 3: Create a topic using the ````kafka-topics.sh```` script
     ````
     bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic meetup_rsvp_raw
 
@@ -791,7 +799,8 @@ As you type messages in the producer window they should appear in the consumer w
     ````
 
 2. Integrating NiFi
-  - Step 1: Add a PublishKafka_1_0 processor to the canvas.
+  - Step 0: Re-use the Process Group from Lab2.
+  - Step 1: Add a PublishKafka_2_0 processor to the canvas. Note that there are processors for other versions of Kafka as well. Choose the correct one.
   - Step 2: Add a routing for the success relationship of the ReplaceText processor to the PublishKafka_1_0 processor added in Step 1 as shown below:
 
     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/publishkafka.png)
@@ -818,10 +827,17 @@ As you type messages in the producer window they should appear in the consumer w
 4. In a terminal window to your VM node and navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_raw```` topic:
 
     ````
-    bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic meetup_rsvp_raw
+    bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic meetup_rsvp_raw
     ````
 
 5. Messages should now appear in the consumer window.
+
+6. Stop the NiFi flow and the consumer.
+
+##### Mandatory: Questions to Answer
+1a. What happens when the Kafka consumer is stopped and the NiFi producer continues to run?
+
+1b. What happens when the Kafka consumer is running and the NiFi producer is stopped?
 
 ------------------
 
@@ -830,14 +846,14 @@ As you type messages in the producer window they should appear in the consumer w
 ## Integrating the Schema Registry
 
 1. Creating the topic
-  - Step 1: Open an SSH connection to your VM.
+  - Step 1: Open a SSH connection to your cluster.
   - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    #cd /usr/hdp/current/kafka-broker/
+    cd /usr/hdp/current/kafka-broker/
     ````
 
-  - Step 3: Create a topic using the kafka-topics.sh script
+  - Step 3: Create a topic using the ````kafka-topics.sh```` script
     ````
     bin/kafka-topics.sh --zookeeper localhost:2181 --create --partitions 1 --replication-factor 1 --topic meetup_rsvp_avro
 
@@ -851,7 +867,7 @@ As you type messages in the producer window they should appear in the consumer w
     ````
 
 2. Adding the Schema to the Schema Registry
-  - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this from the either ```https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc``` drop down in Ambari, as shown below:
+  - Step 1: Open a browser and navigate to the Schema Registry UI. You can get to this either from a drop down in Ambari, as shown below:
 
     ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_2_step1.png)
 
@@ -863,14 +879,14 @@ As you type messages in the producer window they should appear in the consumer w
 
         ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/add_schema_dialog.png)
 
-        For the Schema Text you can download it [here](https://github.com/zoharsan/HDF-Workshop/blob/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
+        For the Schema Text you can download it [here](https://raw.githubusercontent.com/zoharsan/HDF-Workshop/master/meetup_rsvp.asvc) and either copy and paste it or upload the file.
 
         Once the schema information fields have been filled and schema uploaded, click **Save**. You should now see the following:
 	
 	![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_2_step2.png)
 	
    3. We are now ready to integrate the schema with NiFi
-      - Step 1: Remove the PutFile and PublishKafka_1_0 processors from the canvas, we will not need them for this section. Before 	removing the processors, you will need to remove the links between ReplaceText and these processors. Select the links/processors on the canvas, and press delete.
+      - Step 1: Remove the PutFile and PublishKafka_2_0 processors from the canvas, we will not need them for this section. Before removing the processors, (ensure the NiFi flow is stopped), you will need to remove the links between ReplaceText and these processors. Select the links/processors on the canvas, and press delete.
       - Step 2: Add a UpdateAttribute processor to the canvas.
       - Step 3: Add a routing for the success relationship of the ReplaceText processor to the UpdateAttrbute processor added in Step 1.
       - Step 4: Configure the UpdateAttribute processor as shown below:
@@ -895,9 +911,9 @@ As you type messages in the producer window they should appear in the consumer w
   ``
   - Step 8: Add a LogAttribute processor to the canvas. In the settings tab of the processor, select ```success``` in the ```Automatically Terminate Relationships```.
   - Step 9: Add a routing for the failure relationship of the JoltTransformJSON processor to the LogAttribute processor added in Step 8.
-  - Step 10: Add a PublishKafkaRecord_1_0 to the canvas.
-  - Step 11: Add a routing for the success relationship of the JoltTransformJSON processor to the PublishKafkaRecord_1_0 processor added in Step 10.
-  - Step 12: Configure the PublishKafkaRecord_1_0 processor to look like the following:
+  - Step 10: Add a PublishKafkaRecord_2_0 to the canvas.
+  - Step 11: Add a routing for the success relationship of the JoltTransformJSON processor to the PublishKafkaRecord_2_0 processor added in Step 10.
+  - Step 12: Configure the PublishKafkaRecord_2_0 processor to look like the following:
 	- Set Kafka Brokers to: ```<host-FQDN>:6667```
 	- Set Topic Name to: ```meetup_rsvp_avro```
 	- Set Use Transactions to: ```false```
@@ -923,7 +939,7 @@ As you type messages in the producer window they should appear in the consumer w
      
      ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step13_2.png)
       
-     - It should be configured as shown below. Customize the URL with the actual FQDN of your VM:
+     - It should be configured as shown below. Customize the URL with the actual FQDN of your cluster:
 
     ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/hwx_schema_registry_config.png)
      
@@ -950,30 +966,35 @@ As you type messages in the producer window they should appear in the consumer w
 
       ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_step15.png)
       
-     - Enable the JsonTreeReader service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
+     - Enable the AvroRecordSetWriter service controller by clicking on the lightning icon, next to the setting/gear icon, as you did for the HortonworksSchemaRegistry service.
 
     After following the above steps this section of your flow should look like the following:
 
-    ![Image](https://github.com/dhananjaymehta/HDF-Workshop/raw/master/img/update_jolt_kafka_section.png)
+    ![Image](https://raw.githubusercontent.com/vsellappa/HDF-Workshop/master/img/update_jolt_kafka_section.png)
 
 
-4. Start the NiFi flow
-5. In a terminal window to your VM, navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_avro```` topic:
+4. Start the NiFi flow.
+
+5. In a terminal window to your cluster, navigate to the Kafka directory and connect a consumer to the ````meetup_rsvp_avro```` topic, remembering to change the FQDN of your bootstrap-server:
 
     ````
     cd /usr/hdp/current/kafka-broker
-    bin/kafka-console-consumer.sh --zookeeper localhost:2181 --from-beginning --topic meetup_rsvp_avro
+
+    bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic meetup_rsvp_avro
     ````
 
+6. Messages should now appear in the consumer window.
 
-5. Messages should now appear in the consumer window.
+7. Shutdown the NiFi flow and the consumer.
 
 ------------------
 
 # Lab 7
 
-## NiFi Registry:
-For this lab we are going to set up NiFi registry and use variables. NiFi registry provides a central location for storage and management of shared resources. It allows storing and managing versioned flows. 
+## NiFi Registry
+NiFi registry provides a central location for storage and management of shared resources. It allows storing and managing versioned flows. 
+
+For this lab we are going to set up NiFi registry and use variables. 
 
 1. Open Nifi Registry from Ambari UI - 
 Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
@@ -996,10 +1017,10 @@ Ambari UI -> NiFi Registry -> NiFi Registry UI or visit ```<FQDN>:61080```
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_4.png)
 
 
-## Variable Registry:
+## Variable Registry
 ```Nifi >1.4``` provides UI based variable registry to help simplify the configuration management of flows across different environments.  
 
-Step 1: On the processor group Lab2 select "variables op"
+Step 1: On the processor group Lab2 select "variables"
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_01.png)
 
@@ -1012,9 +1033,9 @@ Step 3: Apply the variable and close.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_VR_04.png)
 
-Step 4: Go to PublishKafkaRecord_1_0 processor and update the ```Topic Name```
+Step 4: Go to PublishKafkaRecord_2_0 processor and update the ```Topic Name```
 
-![Image](https://github.com/zoharsan/HDF-Workshop/blob/master/img/Lab6_VR_05b.png)
+![Image](https://raw.githubusercontent.com/zoharsan/HDF-Workshop/master/img/Lab6_VR_05b.png)
 
 
 Step 5: Now we can commit these changes,  Make changes to canvas such as position or time (even position change of processor is tracked). 
@@ -1031,7 +1052,7 @@ Step 7: Decide to Commit or Revert any changes that are made. If you decide to s
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_7.png)
 
-Step 8: The pushed changes will appear in Nifi Registry Lab6
+Step 8: The pushed changes will appear in NiFi Registry.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_8.png)
 
