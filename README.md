@@ -600,6 +600,10 @@ In this lab, we will learn how to configure MiNiFi to send data to NiFi:
 
 4. Now we should be ready to create our flow. The first thing we are going to do is setup an Input Port. This is the port that MiNiFi will be sending data to. To do this drag the Input Port icon to the canvas and call it "From MiNiFi":
 
+````
+NOTE: The Input port must be configured on the Main Flow canvas and not inside a Process Group. 
+````
+
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step4.png)
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step4b.png)
