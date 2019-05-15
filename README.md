@@ -549,7 +549,7 @@ You should now have an empty canvas to start for Lab 3.
 # Lab 3
 
   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/lab3.png)
-  A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/MiNiFi_Flow.xml)
+  A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/templates/MiNiFi_Flow.xml)
 
 ## Download and Install MiNiFi
 
@@ -567,8 +567,8 @@ wget -P /tmp/minifi http://public-repo-1.hortonworks.com/HDF/3.4.0.0/minifi-tool
 
 cd /usr/hdf/3.4.0.0-155
 
-tar zxvf /tmp/minifi-0.*-bin.tar.gz
-tar zxvf /tmp/minifi-toolkit-0.*-bin.tar.gz
+tar zxvf /tmp/minifi/minifi-0.*-bin.tar.gz
+tar zxvf /tmp/minifi/minifi-toolkit-0.*-bin.tar.gz
 
 cd /usr/hdf/current
 ln -s /usr/hdf/3.4.0.0-155/minifi-0.* minifi
@@ -771,7 +771,7 @@ In this lab we are going to explore creating, writing to and consuming Kafka top
 - Step 2: In one shell window connect a consumer, customize the FQDN with the hostname of your cluster:
 
   ````
-  cd /usr/hdp/current/kafka-broker
+  cd /usr/hdf/current/kafka-broker
   bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --from-beginning --topic first-topic
   ````
 
@@ -806,10 +806,10 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 ## Integrating Kafka with NiFi
 1. Creating the topic
   - Step 1: Open a SSH connection to your cluster.
-  - Step 2: Navigate to the Kafka directory (````/usr/hdp/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
+  - Step 2: Navigate to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    cd /usr/hdp/current/kafka-broker/
+    cd /usr/hdf/current/kafka-broker/
     ````
 
   - Step 3: Create a topic using the ````kafka-topics.sh```` script
@@ -876,7 +876,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
   - Step 2: Navigate to the Kafka directory (````/usr/hdf/current/kafka-broker````), this is where Kafka is installed, we will use the utilities located in the bin directory.
 
     ````
-    cd /usr/hdp/current/kafka-broker/
+    cd /usr/hdf/current/kafka-broker/
     ````
 
   - Step 3: Create a topic using the ````kafka-topics.sh```` script
