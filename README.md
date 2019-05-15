@@ -416,7 +416,11 @@ Specifically,
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/jsonpath.png)
 
-    The properties to add are:
+    
+  Note the change in the value of Destination property to ```flowfile-attribute```
+
+  The properties to add are:
+
     ```
     event.name      $.event.event_name
     event.url       $.event.event_url
@@ -428,12 +432,8 @@ Specifically,
     venue.lon       $.venue.lon
     venue.name      $.venue.venue_name
     ```
-    
-  Note the change in the value of Destination property to ```flowfile-attribute```
 
-10. Join the UpdateAttribute processor and EvaluateJsonPath processor.
-
-![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step10.png)
+10. Join the UpdateAttribute processor and EvaluateJsonPath processor by dragging the arrow from UpdateAttribute to EvaluateJsonPath. This is for matched relationship.
 
 Also add a failure relationship (Note: recursive join)
 
@@ -443,16 +443,21 @@ Auto-terminate unmatched relationships in the settings tab:
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step10c.png)
 
-11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. Also the Original  relationship needs to be automatically terminated.  Your configuration should look like below:
+11. Add a SplitJson processor and configure the JsonPath Expression to be ```$.group.group_topics ```. 
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step11.png)
+
+Also the Original relationship needs to be automatically terminated.  Your configuration should look like below:
+
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step11b.png)
 
-12. Join the EvaluateJsonPath processor and the SplitJson processor.  In addition, create a failure recursive join on the SplitJason Processor. Should look like the below.
+12. Join the EvaluateJsonPath processor and the SplitJson processor.
 
-![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12.png)
-![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12b.png)
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12c.png)
+
+In addition, create a failure recursive join on the SplitJson Processor. Should look like the below.
+
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step12b.png)
 
 13. Add a ReplaceText processor and configure the Search Value to be ```([{])([\S\s]+)([}])``` and the Replacement Value to be
     ```
@@ -477,11 +482,14 @@ Auto-terminate unmatched relationships in the settings tab:
   
   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step13.png)
 
-14. Join the SplitJson processor and the ReplaceText processor. In addition add an on Failure recursive join.
+14. Join the SplitJson processor and the ReplaceText processor.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14.png)
-![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14b.png)
+
+In addition add a Failure recursive join.
+
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14c.png)
+![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step14b.png)
 
 15. Add a PutFile processor to the canvas and configure it to write the data out to ```/tmp/rsvp-data```. Automatically terminate both on Success and Failure. The configuration should look like below.
 
@@ -1086,6 +1094,10 @@ Step 7: Decide to Commit or Revert any changes that are made. If you decide to s
 Step 8: The pushed changes will appear in NiFi Registry.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_8.png)
+
+------------------
+
+> # Sections below are outdated and have been kept here for legacy purposes and will be removed going forward.
 
 ------------------
 
