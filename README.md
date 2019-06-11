@@ -363,7 +363,7 @@ Specifically,
   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/lab1.png)
 
    
-  The final template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/templates/HDF-Workshop_Lab1-Flow.xml)
+  The final template for this flow can be found [here](https://github.com/dhananjaymehta/HDF-Workshop/blob/master/templates/HDF-Workshop_Lab1-Flow.xml)
 
   A good plan would be to refer to the template at the end after going through individual steps.
 
