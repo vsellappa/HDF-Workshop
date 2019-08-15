@@ -1,333 +1,41 @@
 # Contents
-- [Lab 1](#lab-1) - Deploy Environment
-  - Install HDP & HDF
-  - Bring up the Environment
 - [Lab Start](#lab-start) - Refresh NiFi concepts
-- [Lab 2](#lab-2) - Getting started with NiFi
+- [Lab 1](#lab-1) - Getting started with NiFi
   - Consuming the Meetup RSVP stream
   - Extracting JSON elements we are interested in
   - Splitting JSON into smaller fragments
   - Writing JSON to File System
-- [Lab 3](#lab-3) - MiNiFi
+- [Lab 2](#lab-2) - MiNiFi
   - Enable Site2Site in NiFi
   - Designing the MiNiFi Flow
   - Preparing the flow
   - Running MiNiFi
-- [Lab 4](#lab-4) - Kafka Basics
+- [Lab 3](#lab-3) - Kafka Basics
   - Creating a topic
   - Producing data
   - Consuming data
-- [Lab 5](#lab-5) - Integrating Kafka with NiFi
+- [Lab 4](#lab-4) - Integrating Kafka with NiFi
   - Creating the Kafka topic
   - Adding the Kafka producer processor
   - Verifying the data is flowing
-- [Lab 6](#lab-6) - Integrating the Schema Registry
+- [Lab 5](#lab-5) - Integrating the Schema Registry
   - Creating the Kafka topic
   - Adding the Meetup Avro Schema
   - Sending Avro data to Kafka
-- [Lab 7](#lab-7) - Integrating the NiFi Registry
+- [Lab 6](#lab-6) - Integrating the NiFi Registry
   - Working with NiFi Variables
   - Creating NiFi Registry
   - Perform flow changes and commit to Registry  
-- [Lab 8](#lab-8) - Real-time Analytics with SAM
+- [Deprecation Notice](#Deprecation-Notice)
+- [Lab 7](#lab-7) - Real-time Analytics with SAM
   - Preparing the SAM Environment
   - Developing the SAM Application
   - Deploying the SAM Application
-- [Lab 9](#lab-9) - Real-Time Data Visualization with Superset
+- [Lab 8](#lab-8) - Real-Time Data Visualization with Superset
   - Locating the Druid Data source
   - Create a Visualization
   - Create a Superset Dashboard
 
-
----------------
-
-# Lab 1
-
-This lab is to deploy HDF.
-
-You should have a virtual machine allocated for a Linux Centos 7 VM to deploy HDF. Credentials to the VM will be provided by the instructor. Open an ssh session on your allocated VM and switch to root as a starting point for this lab (using ```sudo sh``` or ```sudo -i```).
-
-For complete instructions, you can follow the [Official HDF 3.3 Documentation](https://docs.hortonworks.com/HDPDocuments/HDF3/HDF-3.3.0/installing-hdf/content/install-ambari.html) to deploy HDF 3.3. In the following instructions, we are applying these steps to deploy and install an HDF 3.3 environment.
-
-## Apply prerequisites and prepare the environment
-
-For this environment, we will use MySQL Community Edition as the database required for Streaming Analytics Manager, and the Schema Registry.
-
-### Install required packages
-
-Install MySQL and other prerequisites packages
-
-```
-yum localinstall -y https://dev.mysql.com/get/mysql57-community-release-el7-8.noarch.rpm
-yum install -y git python-argparse epel-release mysql-connector-java* mysql-community-server nc curl ntp openssl python zlib wget unzip openssh-clients
-```
-
-### Apply Prerequisites for Ambari Server deployment
-
-1. Disable ipv6: 
-Create the file /etc/sysctl.d/99-hadoop-ipv6.conf containing the following configuration settings:
-```
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-net.ipv6.conf.lo.disable_ipv6 = 1
-```
-Apply the configuration changes using the following command:
-```
-sysctl -e -p /etc/sysctl.d/99-hadoop-ipv6.conf
-```
-
-2. Disable Transparent Huge Pages:
-Check the existing setting. The value inside the brackets is the existing setting:
-```
-cat /sys/kernel/mm/transparent_hugepage/enabled
-cat /sys/kernel/mm/transparent_hugepage/defrag
-```
-If the value is \[always\], you can change it as follows:
-```
-echo 'never' > /sys/kernel/mm/transparent_hugepage/enabled
-echo 'never' > /sys/kernel/mm/transparent_hugepage/defrag
-```
-
-3. Disable selinux:
-Check the current value:
-```sestatus```
-If enabled, you can disable it as follows:
-```setenforce 0```
-Edit ```/etc/selinux/config``` and set the SELINUX mode to ```disabled```:
-```
-# This file controls the state of SELinux on the system.
-# SELINUX= can take one of these three values:
-#     enforcing - SELinux security policy is enforced.
-#     permissive - SELinux prints warnings instead of enforcing.
-#     disabled - No SELinux policy is loaded.
-SELINUX=disabled
-# SELINUXTYPE= can take one of three two values:
-#     targeted - Targeted processes are protected,
-#     minimum - Modification of targeted policy. Only selected processes are protected.
-#     mls - Multi Level Security protection.
-SELINUXTYPE=targeted
-```
-
-4. Disable firewalld/iptables:
-Check if firewalld is installed:
-```
-yum list installed | grep firewalld
-```
-If this doesn't return anything, firewalld is not installed. You can skip the next step.
-If firewalld is found, run the following commands:
-```
-systemctl disable firewalld
-systemctl stop firewalld
-```
-Check if iptables/ip6tables is running:
-```
-systemctl status iptables
-systemctl status ip6tables
-```
-If the service is installed, disable it using the commands below:
-```
-chkconfig iptables off
-service iptables stop
-chkconfig ip6tables off
-service ip6tables stop
-```
-
-5. Enable ntpd:
-```
-ntpd -qg
-chkconfig ntpd on 
-service ntpd restart
-```
-
-6. Install Java:
-Install OpenJDK Java version 1.8:
-```
-yum install -y java-1.8.0-openjdk-devel
-mkdir -p /usr/java
-ln -sf /etc/alternatives/java_sdk /usr/java/default
-```
-7. This lab requires at least 40 GB of RAM on your VM. If you have 40 GB of RAM or more, you can skip this step. If you have 32 GB of RAM, please add 8GB of swap space as 32 GB of memory will not be sufficient for this lab:
-```
-dd if=/dev/zero of=/swapfile bs=4K count=2M
-chmod 600 /swapfile
-mkswap /swapfile
-swapon /swapfile
-free -m
-```
-You should see 8GB of swap space added in the free -m output above.
-
-### Setup MySQL Databases for HDP & HDF
-
-1. Enable and start MySQL service:
-```
-sudo systemctl enable mysqld.service
-sudo systemctl start mysqld.service
-```
-2. Create the following mysql-setup.sql script:
-```
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'Secur1ty!'; 
-uninstall plugin validate_password;
-CREATE DATABASE registry DEFAULT CHARACTER SET utf8; 
-CREATE DATABASE streamline DEFAULT CHARACTER SET utf8; 
-CREATE DATABASE druid DEFAULT CHARACTER SET utf8;
-CREATE DATABASE superset DEFAULT CHARACTER SET utf8;
-CREATE USER 'registry'@'%' IDENTIFIED BY 'StrongPassword'; 
-CREATE USER 'streamline'@'%' IDENTIFIED BY 'StrongPassword';
-CREATE USER 'druid'@'%' IDENTIFIED BY 'StrongPassword';
-CREATE USER 'superset'@'%' IDENTIFIED BY 'StrongPassword';
-GRANT ALL PRIVILEGES ON *.* TO 'registry'@'%' WITH GRANT OPTION ; 
-GRANT ALL PRIVILEGES ON *.* TO 'streamline'@'%' WITH GRANT OPTION ;
-GRANT ALL PRIVILEGES ON *.* TO 'druid'@'%' WITH GRANT OPTION;
-GRANT ALL PRIVILEGES ON *.* TO 'superset'@'%' WITH GRANT OPTION;
-commit;
-```
-3. Identify the password created by default and setup a new password. You can choose a password of your own and set it up in the following script. By default, it is StrongPassword:
-```
-#extract system generated Mysql password
-oldpass=$( grep 'temporary.*root@localhost' /var/log/mysqld.log | tail -n 1 | sed 's/.*root@localhost: //' )
-echo $oldpass
-export db_password=${db_password:-StrongPassword}
-```
-4. Run the script mysql-setup created previously:
-```
-mysql -h localhost -u root -p"$oldpass" --connect-expired-password < mysql-setup.sql
-```
-5. Change root user password for mysql:
-```
-mysqladmin -u root -p'Secur1ty!' password ${db_password}
-```
-6. Test if the password changes were taken into effect:
-```
-mysql -u root -p${db_password} -e 'show databases;'
-```
-You should see a list of databases being returned:
-```
-+--------------------+
-| Database           |
-+--------------------+
-| information_schema |
-| mysql              |
-| performance_schema |
-| registry           |
-| streamline         |
-| sys                |
-+--------------------+
-```
-
-## Deploy Ambari
-
-1. Download the Ambari repository
-```
-wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.7.1.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
-```
-Verify that the repository has been added:
-```
-yum repolist
-```
-
-2. Install Ambari agent:
-```
-yum install -y ambari-agent
-```
-
-Edit ```/etc/ambari-agent/conf/ambari-agent.ini``` and add the parameter ```force_https_protocol=PROTOCOL_TLSv1_2``` at the \[security\] section of the file:
-```
-[security]
-force_https_protocol=PROTOCOL_TLSv1_2
-keysdir=/var/lib/ambari-agent/keys
-server_crt=ca.crt
-passphrase_env_var_name=AMBARI_PASSPHRASE
-ssl_verify_cert=0
-credential_lib_dir=/var/lib/ambari-agent/cred/lib
-credential_conf_dir=/var/lib/ambari-agent/cred/conf
-credential_shell_cmd=org.apache.hadoop.security.alias.CredentialShell
-```
-This is to workaround some jdk changes disabling [TLSv1](https://bugzilla.redhat.com/show_bug.cgi?id=1577372)
-
-3. Start the Ambari agent:
-```
-chkconfig ambari-agent on
-ambari-agent start
-```
-
-4. Install Ambari server:
-```
-yum install -y ambari-server
-ambari-server setup -j /usr/java/default -s
-```
-5. Start Ambari server
-```
-ambari-server start
-```
-Make sure Ambari starts successfully.
-
-## Ambari Server post-install steps
-
-1. Setup MySQL JDBC Driver with Ambari:
-```
-ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
-```
-2. Install HDF MPack:
-```
-export mpack_url="http://public-repo-1.hortonworks.com/HDF/amazonlinux2/3.x/updates/3.3.0.0/tars/hdf_ambari_mp/hdf-ambari-mpack-3.3.0.0-165.tar.gz"
-ambari-server install-mpack --verbose --mpack=${mpack_url}
-```
-3. Restart Ambari
-```
-ambari-server restart
-```
-
-## Deploy HDP and HDF
-
-In this section, please proceed with an HDP + HDF installation using the Ambari wizard. Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
-
-1. For the version, select HDP-3.0.1
-2. Choose RedHat7 for the Operating System
-3. For install options, enter the FQDN of your host (output of ```hostname -f``` on your VM) and for Host Registration, select ```Perform manual registration on hosts and do not use SSH```.
-4. Perform Host Registration. If it doesn't work, check the log.
-5. **For the Services to be installed, please only choose the following ones:**
-	- HDFS
-	- YARN + MapReduce2
-	- Tez
-	- Pig
-	- Zookeeper
-	- Storm
-	- Infra Solr
-	- Ambari Metrics
-	- Kafka
-	- Log Search
-	- Druid
-	- NiFi
-	- NiFi Registry
-	- Schema Registry
-	- Streaming Analytics Manager
-	- Superset
-	
-	You will get some warnings about Limited Functionality for not selecting Apache Atlas, and Apache Ranger. Just click ```Proceed 	Anyway```.
-6. For credentials, please use ```StrongPassword``` as the password for all components.
-7. For databases, select ```MYSQL``` for Druid Metadata Storage type and for Superset.
-8. In the superset configuration, in the ```ADVANCED``` tab, section ```Advanced superset```, please set SUPERSET_WEBSERVER_PORT to ```19088```. Leave all other options by default, and keep clicking ```Next```.
-9. On the ```All Configurations``` tab, there is a bell in red. Click on the bell.
-10. For the required configuration, edit the parameters for the passwords and use ```StrongPassword``` as the password for all parameters.
-11. Click on ```Next``` and ```Deploy```.
-12. Wait for installation to complete. This should take anywhere from 30 to 60 minutes, depending on your VM performance.
-13. After installation will complete, Ambari will start all services. 
-If some of the services start-up fails, it will abort starting-up all remaining services, and your installation will complete but with all the services down. Do not panic. Start all services individually, starting up with core Hadoop services first (HDFS, Zookeeper, YARN, MapReduce) followed by all other services with the exception of Smartsense (You can put Smartsense in Maintenance Mode). 
-For any service failing to start-up, please check the log.
-
-## Access your cluster
-
-After installation:
-
-- Login to Ambari web UI by opening http://{YOUR_IP}:8080 and log in with **admin/admin**
-
-- You will see a list of Hadoop components running on your node on the left side of the page
-  - They should all show green (ie started) status, except for SmartSense. If not, start them by Ambari via 'Service Actions' menu for that service.
-  - If there are any errors starting any of the components, please start the service, check for any errors during startup and 		troubleshoot.
-  - Once all services are started, please click on the NiFi service. On the right hand side, you will see a section called ```Quick Links```. Click on ```NiFi UI```. 
-  - You are now ready to start the Lab 2.
-
------------------------------
 
 # Lab Start
 
@@ -347,7 +55,7 @@ Keep the [NiFi Docs](http://nifi.apache.org/docs.html) specifically the User Gui
 
 -----------------------------
 
-# Lab 2
+# Lab 1
 
 In this lab, we will learn how to consume data from an external system, extract content that we are interested in and then store the data in our system.
 
@@ -546,7 +254,7 @@ You should now have an empty canvas to start for Lab 3.
 
 ------------------
 
-# Lab 3
+# Lab 2
 
   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/lab3.png)
   A template for this flow can be found [here](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/templates/MiNiFi_Flow.xml)
@@ -737,7 +445,7 @@ sudo bin/minifi.sh stop
 
 ------------------
 
-# Lab 4
+# Lab 3
 
 ## Kafka Basics
 In this lab we are going to explore creating, writing to and consuming Kafka topics. This will come in handy when we later integrate Kafka with NiFi and Streaming Analytics Manager.
@@ -801,7 +509,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 
 ------------------
 
-# Lab 5
+# Lab 4
 
 ## Integrating Kafka with NiFi
 1. Creating the topic
@@ -866,7 +574,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 
 ------------------
 
-# Lab 6
+# Lab 5
 
 ## Integrating the Schema Registry
 
@@ -1028,7 +736,7 @@ bin/kafka-console-consumer.sh --bootstrap-server demo.hortonworks.com:6667 --top
 
 ------------------
 
-# Lab 7
+# Lab 6
 
 ## NiFi Registry
 NiFi registry provides a central location for storage and management of shared resources. It allows storing and managing versioned flows. 
@@ -1095,13 +803,15 @@ Step 8: The pushed changes will appear in NiFi Registry.
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab6_NR_8.png)
 
-------------------
 
-> # Sections below are outdated and have been kept here for legacy purposes and will be removed going forward.
+-----------------------------
+# Deprecation Notice
 
-------------------
+> Sections below are outdated and have been kept here for legacy purposes and will be removed going forward. It might still work but there is no guarantee that it will. Proceed at your own risk.
 
-# Lab 8
+-----------------------------
+
+# Lab 7
 
 ## Real-time Analytics with SAM
 
@@ -1343,7 +1053,7 @@ Let this application run at least for 30-45 minutes to populate the Druid cube d
 
 ------------------
 
-# Lab 9
+# Lab 8
 
 Superset is a Business Intelligence tool packaged with many features for designing, maintaining and enabling the storytelling of data through meaningful data visualizations for real-time data.
 
