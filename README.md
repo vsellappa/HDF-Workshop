@@ -234,7 +234,7 @@ You should see data flowing after a couple of minutes.
 4. How can you change the flow to get the member photo from the Json and download it.
 
 
-### Post Lab 2
+### Post Lab 1
 1. After completing this lab, create a new Process Group by dragging onto the canvas the Process Group icon and call it Lab2:
 
 ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab2_step18.png)
