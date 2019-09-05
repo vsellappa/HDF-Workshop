@@ -358,7 +358,7 @@ NOTE: The Input port must be configured on the Main Flow canvas and not inside a
   
   ![Image](https://raw.githubusercontent.com/dhananjaymehta/HDF-Workshop/master/img/Lab3_step9c.png)
 
-  - Note that the URL above is specific to that instance and your URL may be different.
+  - Note that the URL above is specific to that instance and your URL may be different , MiNiFi communicates on the internal IP Address/Host.  In the demo cluster its `demo.hortonworks.com`.
   
   - Connect the GenerateFlowFile to the Remote Process Group. Your canvas should look like the following:
   
